@@ -1,0 +1,1935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Getting Started — Deprixa Plus Documentation</title>
+  <link rel="stylesheet" href="assets/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+</head>
+<body>
+<div id="header-container"></div>
+<div id="sidebar-container"></div>
+<main class="doc-content">
+  <div id="breadcrumb-container"></div>
+
+  <div class="page-header">
+    <h1>Getting Started</h1>
+    <p class="subtitle">Installation guide and first-run configuration for Deprixa Plus on your server.</p>
+    <div class="badge-group">
+      <span class="badge badge-tech">PHP 8.2+</span>
+      <span class="badge badge-tech">Node 20+</span>
+      <span class="badge badge-tech">MySQL 8.0+</span>
+      <span class="badge badge-tech">Composer 2.6+</span>
+    </div>
+  </div>
+
+  <!-- SYSTEM REQUIREMENTS -->
+  <section class="doc-section">
+    <h2>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      System Requirements
+    </h2>
+    <p>Deprixa Plus requires a standard LEMP or LAMP stack. The following are minimum and recommended specifications.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>Minimum</th>
+          <th>Recommended</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>PHP</td>
+          <td>8.2</td>
+          <td>8.3+</td>
+          <td>Extensions required: BCMath, Ctype, cURL, DOM, Fileinfo, JSON, Mbstring, OpenSSL, PCRE, PDO, Tokenizer, XML, GD or Imagick</td>
+        </tr>
+        <tr>
+          <td>Web Server</td>
+          <td>Nginx 1.18 / Apache 2.4</td>
+          <td>Nginx 1.24+</td>
+          <td>Nginx is strongly recommended for production. Apache requires mod_rewrite.</td>
+        </tr>
+        <tr>
+          <td>Database</td>
+          <td>MySQL 8.0</td>
+          <td>MySQL 8.0+</td>
+          <td>MariaDB 10.6+ is also supported. PostgreSQL is not tested.</td>
+        </tr>
+        <tr>
+          <td>Node.js</td>
+          <td>18 LTS</td>
+          <td>20 LTS</td>
+          <td>Required only for building frontend assets. Not needed in production if you use pre-built assets.</td>
+        </tr>
+        <tr>
+          <td>Composer</td>
+          <td>2.5</td>
+          <td>2.6+</td>
+          <td>PHP package manager.</td>
+        </tr>
+        <tr>
+          <td>Redis</td>
+          <td>Optional</td>
+          <td>7.x (strongly recommended)</td>
+          <td>Used for cache, sessions, and job queues. Without Redis, file-based drivers are used which are slower under load.</td>
+        </tr>
+        <tr>
+          <td>RAM</td>
+          <td>1 GB</td>
+          <td>4 GB+</td>
+          <td>For small teams. Larger installations benefit from 8+ GB.</td>
+        </tr>
+        <tr>
+          <td>Storage</td>
+          <td>5 GB</td>
+          <td>50+ GB</td>
+          <td>Depends on shipment label volume and file uploads (logos, employee documents).</td>
+        </tr>
+        <tr>
+          <td>OS</td>
+          <td>Ubuntu 20.04 LTS</td>
+          <td>Ubuntu 22.04 / 24.04 LTS</td>
+          <td>macOS and Windows WSL2 are supported for local development only. Production should use Linux.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-info">
+      <div class="callout-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <div class="callout-body">
+        <p class="callout-title">Supported Hosting Environments</p>
+        <p>Deprixa Plus can be installed on: <strong>VPS/dedicated servers</strong> (DigitalOcean, Linode, Hetzner, AWS EC2 — full control, recommended for production), <strong>Hostinger Business or Premium shared hosting</strong> (SSH access required — see the <a href="#hostinger-install">Hostinger installation guide</a> below), and <strong>local development servers</strong> including Laravel Herd, Laragon, Laravel Valet, Docker/Sail, WAMP, WSL2+LAMP, DDEV, Native Linux, MAMP, and XAMPP (see the <a href="#local-install">local installation guide</a> below for all 10 environments).</p>
+        <p>Basic shared hosting <em>without SSH access</em> is not supported because Composer and Artisan commands must be run at least once during setup.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOCAL INSTALLATION -->
+  <section class="doc-section" id="local-install">
+    <h2>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      Local Development Setup
+    </h2>
+    <p>Use this guide to run Deprixa Plus on your own computer for development or testing. Node.js is <strong>required</strong> on local machines to compile the frontend assets. Choose the environment that best fits your operating system and experience level.</p>
+
+    <div class="callout callout-info" style="margin-bottom:1.5rem;">
+      <div class="callout-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <div class="callout-body">
+        <p class="callout-title">10 Supported Local Environments</p>
+        <p>This section covers setup instructions for <strong>Laravel Herd</strong>, <strong>Laragon</strong>, <strong>Laravel Valet</strong>, <strong>Docker / Laravel Sail</strong>, <strong>WAMP</strong>, <strong>WSL2 + LAMP</strong>, <strong>DDEV</strong>, <strong>Native Linux</strong>, <strong>MAMP</strong>, and <strong>XAMPP</strong>. All environments require <strong>PHP 8.2+</strong>, <strong>Composer 2.6+</strong>, <strong>Node.js 20+ LTS</strong>, and <strong>MySQL 8.0+</strong> (or MariaDB 10.6+). Pick the one you are most comfortable with and jump to its section below.</p>
+      </div>
+    </div>
+
+    <!-- Quick Recommendation Table -->
+    <h3 style="margin-top:2rem;">Quick Comparison</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Environment</th>
+          <th>OS</th>
+          <th>Best For</th>
+          <th>Difficulty</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><a href="#local-herd">Laravel Herd</a> <span class="badge badge-tech" style="font-size:0.7rem;">RECOMMENDED</span></td><td>macOS / Windows</td><td>Fastest zero-config setup</td><td>Easy</td></tr>
+        <tr><td><a href="#local-laragon">Laragon</a> <span class="badge badge-tech" style="font-size:0.7rem;">RECOMMENDED</span></td><td>Windows</td><td>Best all-in-one for Windows</td><td>Easy</td></tr>
+        <tr><td><a href="#local-valet">Laravel Valet</a></td><td>macOS</td><td>Lightweight CLI-driven dev</td><td>Easy</td></tr>
+        <tr><td><a href="#local-sail">Docker / Laravel Sail</a></td><td>Cross-platform</td><td>Reproducible, containerized environments</td><td>Medium</td></tr>
+        <tr><td><a href="#local-wamp">WAMP</a></td><td>Windows</td><td>Classic Windows AMP stack</td><td>Easy</td></tr>
+        <tr><td><a href="#local-wsl2">WSL2 + LAMP</a></td><td>Windows</td><td>Linux-like dev on Windows</td><td>Advanced</td></tr>
+        <tr><td><a href="#local-ddev">DDEV</a></td><td>Cross-platform</td><td>Docker-based with per-project config</td><td>Medium</td></tr>
+        <tr><td><a href="#local-linux">Native Linux</a></td><td>Ubuntu / Debian</td><td>Direct LEMP stack on Linux</td><td>Medium</td></tr>
+        <tr><td><a href="#local-mamp">MAMP</a></td><td>macOS</td><td>Classic macOS AMP stack</td><td>Easy</td></tr>
+        <tr><td><a href="#local-xampp">XAMPP</a></td><td>Windows / macOS</td><td>Classic cross-platform AMP stack</td><td>Easy</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ============================================================ -->
+    <!-- GUIDE 1: Laravel Herd -->
+    <!-- ============================================================ -->
+    <div id="local-herd">
+      <h3 style="margin-top:2.5rem;">1. Laravel Herd (macOS / Windows) <span class="badge badge-tech" style="font-size:0.75rem;">RECOMMENDED</span></h3>
+      <p>Laravel Herd is a blazing-fast, native development environment that bundles PHP, Nginx, MySQL, and Node.js. No Docker or virtual machines required.</p>
+
+      <div class="callout callout-info" style="margin-bottom:1rem;">
+        <div class="callout-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="callout-body">
+          <p class="callout-title">Prerequisites</p>
+          <p>Download and install <strong>Laravel Herd</strong> from <a href="https://herd.laravel.com" target="_blank">herd.laravel.com</a>. Herd includes PHP, Nginx, MySQL, and Node.js built-in — no extra installs needed. Make sure <strong>Composer</strong> is available globally (Herd installs it automatically).</p>
+        </div>
+      </div>
+
+      <ol class="step-list">
+        <li class="step-card">
+          <div class="step-number">1</div>
+          <div class="step-body">
+            <h4>Park Your Projects Folder</h4>
+            <p>Open Herd and go to <strong>Settings → General → Paths</strong>. Add your projects directory (e.g., <code>~/Sites</code> or <code>~/Herd</code>). Every folder inside a parked directory automatically becomes a <code>.test</code> domain.</p>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">2</div>
+          <div class="step-body">
+            <h4>Extract Project Files</h4>
+            <p>Extract the downloaded ZIP into your parked directory. The folder name becomes the URL:</p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash"># Extract to ~/Herd/deprixa-plus
+# URL will be: http://deprixa-plus.test</code></pre>
+            </div>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">3</div>
+          <div class="step-body">
+            <h4>Install Dependencies</h4>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">cd ~/Herd/deprixa-plus
+composer install</code></pre>
+            </div>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">4</div>
+          <div class="step-body">
+            <h4>Configure Environment</h4>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">cp .env.example .env
+php artisan key:generate</code></pre>
+            </div>
+            <p style="margin-top:0.75rem;">Open <code>.env</code> and set <code>APP_URL=http://deprixa-plus.test</code>, <code>APP_ENV=local</code>, and <code>APP_DEBUG=true</code>.</p>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">5</div>
+          <div class="step-body">
+            <h4>Build Frontend Assets</h4>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">npm install &amp;&amp; npm run build
+php artisan storage:link</code></pre>
+            </div>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">6</div>
+          <div class="step-body">
+            <h4>Create Database and Run Wizard</h4>
+            <p>Open <strong>TablePlus</strong> (or any MySQL client) and create an empty database named <code>deprixa_plus</code>. Then open your browser and visit:</p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">URL</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">http://deprixa-plus.test/install</code></pre>
+            </div>
+            <p style="margin-top:0.75rem;">Follow the 5-step wizard. Use <code>127.0.0.1</code> as the database host and <code>root</code> / empty password (Herd default).</p>
+          </div>
+        </li>
+      </ol>
+
+      <div class="callout callout-info" style="margin-top:1rem;">
+        <div class="callout-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="callout-body">
+          <p class="callout-title">Pro Tip</p>
+          <p>Use <code>herd secure deprixa-plus</code> to enable HTTPS locally. Herd also lets you switch PHP versions instantly via the menu bar — useful for testing compatibility.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- GUIDE 2: Laragon -->
+    <!-- ============================================================ -->
+    <div id="local-laragon">
+      <h3 style="margin-top:2.5rem;">2. Laragon (Windows) <span class="badge badge-tech" style="font-size:0.75rem;">RECOMMENDED FOR WINDOWS</span></h3>
+      <p>Laragon is a portable, fast, and lightweight development environment for Windows. It auto-creates virtual hosts and includes Apache, MySQL, PHP, Node.js, and more.</p>
+
+      <div class="callout callout-info" style="margin-bottom:1rem;">
+        <div class="callout-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="callout-body">
+          <p class="callout-title">Prerequisites</p>
+          <p>Download and install <strong>Laragon Full</strong> from <a href="https://laragon.org" target="_blank">laragon.org</a>. The full edition includes PHP 8.2+, MySQL 8, Apache, Node.js, npm, Composer, and HeidiSQL. Ensure PHP 8.2+ is selected in <strong>Laragon → Menu → PHP</strong>.</p>
+        </div>
+      </div>
+
+      <ol class="step-list">
+        <li class="step-card">
+          <div class="step-number">1</div>
+          <div class="step-body">
+            <h4>Extract Project Files</h4>
+            <p>Extract the downloaded ZIP into Laragon's web root. Laragon auto-creates a virtual host for each folder:</p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">path</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">C:\laragon\www\deprixa-plus</code></pre>
+            </div>
+            <p style="margin-top:0.75rem;">The <code>artisan</code> file must be at the root of this folder. Laragon will auto-create <code>deprixa-plus.test</code> as the virtual host.</p>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">2</div>
+          <div class="step-body">
+            <h4>Start Services</h4>
+            <p>Open Laragon and click <strong>"Start All"</strong>. This launches Apache, MySQL, and sets up the virtual host automatically. If prompted, allow Laragon to update the Windows hosts file.</p>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">3</div>
+          <div class="step-body">
+            <h4>Install Dependencies</h4>
+            <p>Click <strong>"Terminal"</strong> in Laragon (or open Cmder/cmd) — Laragon adds PHP, Composer, and Node to the PATH automatically:</p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash — Laragon Terminal</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">cd C:\laragon\www\deprixa-plus
+composer install
+cp .env.example .env
+php artisan key:generate</code></pre>
+            </div>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">4</div>
+          <div class="step-body">
+            <h4>Build Frontend and Create Symlink</h4>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">npm install &amp;&amp; npm run build
+php artisan storage:link</code></pre>
+            </div>
+            <p style="margin-top:0.75rem;">Open <code>.env</code> and set <code>APP_URL=http://deprixa-plus.test</code>, <code>APP_ENV=local</code>, and <code>APP_DEBUG=true</code>.</p>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">5</div>
+          <div class="step-body">
+            <h4>Create Database and Run Wizard</h4>
+            <p>Open <strong>HeidiSQL</strong> (built into Laragon — right-click tray icon → MySQL → HeidiSQL) and create an empty database named <code>deprixa_plus</code>. Then visit:</p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">URL</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">http://deprixa-plus.test/install</code></pre>
+            </div>
+            <p style="margin-top:0.75rem;">Follow the 5-step wizard. Default Laragon MySQL credentials: host <code>127.0.0.1</code>, port <code>3306</code>, user <code>root</code>, password empty.</p>
+          </div>
+        </li>
+      </ol>
+
+      <div class="callout callout-info" style="margin-top:1rem;">
+        <div class="callout-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="callout-body">
+          <p class="callout-title">Pro Tip</p>
+          <p>Laragon supports switching PHP versions via <strong>Menu → PHP</strong>. You can also enable SSL per site by right-clicking the Laragon tray icon → <strong>Apache → SSL → deprixa-plus</strong>.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- GUIDE 3: Laravel Valet -->
+    <!-- ============================================================ -->
+    <div id="local-valet">
+      <h3 style="margin-top:2.5rem;">3. Laravel Valet (macOS)</h3>
+      <p>Laravel Valet is a lightweight macOS development environment that uses Nginx under the hood. It consumes minimal resources and automatically serves sites from parked directories.</p>
+
+      <div class="callout callout-info" style="margin-bottom:1rem;">
+        <div class="callout-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="callout-body">
+          <p class="callout-title">Prerequisites</p>
+          <p><strong>Homebrew</strong>, <strong>PHP 8.2+</strong> (via <code>brew install php</code>), <strong>Composer</strong> (globally installed), <strong>Node.js 20+ LTS</strong>, and <strong>MySQL 8</strong> (via <code>brew install mysql</code>).</p>
+        </div>
+      </div>
+
+      <ol class="step-list">
+        <li class="step-card">
+          <div class="step-number">1</div>
+          <div class="step-body">
+            <h4>Install and Configure Valet</h4>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">composer global require laravel/valet
+valet install
+
+# Park your projects directory
+cd ~/Sites
+valet park</code></pre>
+            </div>
+            <p style="margin-top:0.75rem;">Every folder inside <code>~/Sites</code> is now automatically served as <code>folder-name.test</code>.</p>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">2</div>
+          <div class="step-body">
+            <h4>Set Up MySQL and Create Database</h4>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">brew install mysql
+brew services start mysql
+mysql -u root -e "CREATE DATABASE deprixa_plus;"</code></pre>
+            </div>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">3</div>
+          <div class="step-body">
+            <h4>Extract and Install Project</h4>
+            <p>Extract the ZIP to <code>~/Sites/deprixa-plus</code>, then install dependencies:</p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">cd ~/Sites/deprixa-plus
+composer install
+cp .env.example .env
+php artisan key:generate
+npm install &amp;&amp; npm run build
+php artisan storage:link</code></pre>
+            </div>
+            <p style="margin-top:0.75rem;">Set <code>APP_URL=http://deprixa-plus.test</code> in <code>.env</code>.</p>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">4</div>
+          <div class="step-body">
+            <h4>Run the Installation Wizard</h4>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">URL</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">http://deprixa-plus.test/install</code></pre>
+            </div>
+            <p style="margin-top:0.75rem;">Follow the 5-step wizard. Use <code>127.0.0.1</code> as the host, <code>root</code> as the user, and an empty password (Homebrew MySQL default).</p>
+          </div>
+        </li>
+      </ol>
+
+      <div class="callout callout-info" style="margin-top:1rem;">
+        <div class="callout-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="callout-body">
+          <p class="callout-title">Pro Tip</p>
+          <p>Run <code>valet secure deprixa-plus</code> to serve the site over HTTPS with a trusted local certificate. This is useful for testing features that require a secure connection (e.g., service workers, clipboard API).</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- GUIDE 4: Docker / Laravel Sail -->
+    <!-- ============================================================ -->
+    <div id="local-sail">
+      <h3 style="margin-top:2.5rem;">4. Docker / Laravel Sail (Cross-platform)</h3>
+      <p>Laravel Sail provides a Docker-powered local development environment. It runs MySQL, PHP, Node.js, and all dependencies inside containers — nothing needs to be installed on your host machine except Docker.</p>
+
+      <div class="callout callout-info" style="margin-bottom:1rem;">
+        <div class="callout-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="callout-body">
+          <p class="callout-title">Prerequisites</p>
+          <p><strong>Docker Desktop</strong> must be installed and running. On Windows, enable <strong>WSL2 backend</strong> in Docker Desktop settings. No local PHP, Composer, or Node.js installation required — everything runs inside containers.</p>
+        </div>
+      </div>
+
+      <ol class="step-list">
+        <li class="step-card">
+          <div class="step-number">1</div>
+          <div class="step-body">
+            <h4>Bootstrap Composer via Docker</h4>
+            <p>Extract the ZIP to your desired folder, then install PHP dependencies using a temporary Docker container:</p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">cd deprixa-plus
+
+docker run --rm \
+  -u "$(id -u):$(id -g)" \
+  -v "$(pwd):/var/www/html" \
+  -w /var/www/html \
+  laravelsail/php83-composer:latest \
+  composer install --ignore-platform-reqs</code></pre>
+            </div>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">2</div>
+          <div class="step-body">
+            <h4>Configure Environment for Sail</h4>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">cp .env.example .env</code></pre>
+            </div>
+            <p style="margin-top:0.75rem;">Edit <code>.env</code> and set the following values for Sail's MySQL container:</p>
+            <div class="code-block" style="margin-top:0.5rem;">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">.env</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">APP_URL=http://localhost
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=deprixa_plus
+DB_USERNAME=sail
+DB_PASSWORD=password</code></pre>
+            </div>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">3</div>
+          <div class="step-body">
+            <h4>Start Sail Containers</h4>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">./vendor/bin/sail up -d</code></pre>
+            </div>
+            <p style="margin-top:0.75rem;">Wait for all containers to start. The first run downloads Docker images and may take a few minutes.</p>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">4</div>
+          <div class="step-body">
+            <h4>Install Dependencies Inside Sail</h4>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">./vendor/bin/sail artisan key:generate
+./vendor/bin/sail npm install
+./vendor/bin/sail npm run build
+./vendor/bin/sail artisan storage:link</code></pre>
+            </div>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">5</div>
+          <div class="step-body">
+            <h4>Run the Installation Wizard</h4>
+            <p>Sail's MySQL container auto-creates the database. Visit:</p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">URL</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">http://localhost/install</code></pre>
+            </div>
+            <p style="margin-top:0.75rem;">In the wizard database step, use host <code>mysql</code>, user <code>sail</code>, password <code>password</code>, database <code>deprixa_plus</code>.</p>
+          </div>
+        </li>
+      </ol>
+
+      <div class="callout callout-info" style="margin-top:1rem;">
+        <div class="callout-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="callout-body">
+          <p class="callout-title">Pro Tip</p>
+          <p>Add <code>alias sail='./vendor/bin/sail'</code> to your shell profile to shorten commands (e.g., <code>sail up -d</code>, <code>sail artisan migrate</code>). Use <code>sail down</code> to stop all containers.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- GUIDE 5: WAMP -->
+    <!-- ============================================================ -->
+    <div id="local-wamp">
+      <h3 style="margin-top:2.5rem;">5. WAMP (Windows)</h3>
+      <p>WampServer provides Apache, MySQL, and PHP on Windows. It uses a system tray icon for managing services and includes phpMyAdmin for database management.</p>
+
+      <div class="callout callout-info" style="margin-bottom:1rem;">
+        <div class="callout-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="callout-body">
+          <p class="callout-title">Prerequisites</p>
+          <p>Download and install <strong>WampServer</strong> from <a href="https://wampserver.com" target="_blank">wampserver.com</a>. After installation, click the WAMP tray icon → <strong>PHP → Version</strong> and select <strong>PHP 8.2+</strong>. Install <strong>Composer</strong> globally and <strong>Node.js 20+ LTS</strong> separately.</p>
+        </div>
+      </div>
+
+      <ol class="step-list">
+        <li class="step-card">
+          <div class="step-number">1</div>
+          <div class="step-body">
+            <h4>Extract Project Files</h4>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">path</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">C:\wamp64\www\deprixa-plus</code></pre>
+            </div>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">2</div>
+          <div class="step-body">
+            <h4>Create Database via phpMyAdmin</h4>
+            <p>Start WAMP (tray icon should turn green), then open <code>http://localhost/phpmyadmin</code>. Create a new database named <code>deprixa_plus</code> with <code>utf8mb4_unicode_ci</code> collation.</p>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">3</div>
+          <div class="step-body">
+            <h4>Install Dependencies</h4>
+            <p>Open Command Prompt or PowerShell:</p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash — Command Prompt</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">cd C:\wamp64\www\deprixa-plus
+composer install
+cp .env.example .env
+php artisan key:generate
+npm install &amp;&amp; npm run build
+php artisan storage:link</code></pre>
+            </div>
+            <p style="margin-top:0.75rem;">Set <code>APP_URL=http://localhost/deprixa-plus/public</code> in <code>.env</code>.</p>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">4</div>
+          <div class="step-body">
+            <h4>Run the Installation Wizard</h4>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">URL</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">http://localhost/deprixa-plus/public/install</code></pre>
+            </div>
+            <p style="margin-top:0.75rem;">Default WAMP MySQL credentials: host <code>127.0.0.1</code>, user <code>root</code>, password empty.</p>
+          </div>
+        </li>
+      </ol>
+
+      <div class="callout callout-info" style="margin-top:1rem;">
+        <div class="callout-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="callout-body">
+          <p class="callout-title">Pro Tip</p>
+          <p>If PHP is not in your PATH, add WAMP's PHP directory to your system PATH: <code>C:\wamp64\bin\php\php8.3.x</code>. Alternatively, use the full path to php.exe in your commands.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- GUIDE 6: WSL2 + LAMP -->
+    <!-- ============================================================ -->
+    <div id="local-wsl2">
+      <h3 style="margin-top:2.5rem;">6. WSL2 + LAMP (Windows)</h3>
+      <p>Run a full Linux LAMP/LEMP stack inside Windows Subsystem for Linux 2. This gives you a production-like environment directly on Windows with near-native performance.</p>
+
+      <div class="callout callout-info" style="margin-bottom:1rem;">
+        <div class="callout-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="callout-body">
+          <p class="callout-title">Prerequisites</p>
+          <p>Install <strong>Ubuntu 22.04</strong> (or 24.04) from the Microsoft Store. WSL2 must be enabled (<code>wsl --install</code> from PowerShell as admin). You will also need <strong>Node.js 20+ LTS</strong> and <strong>Composer</strong> installed inside the WSL Ubuntu instance.</p>
+        </div>
+      </div>
+
+      <ol class="step-list">
+        <li class="step-card">
+          <div class="step-number">1</div>
+          <div class="step-body">
+            <h4>Install LEMP Stack Inside WSL</h4>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash — WSL Ubuntu</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">sudo apt update &amp;&amp; sudo apt upgrade -y
+sudo apt install -y nginx mysql-server php8.3-fpm php8.3-mysql \
+  php8.3-mbstring php8.3-xml php8.3-curl php8.3-zip php8.3-gd \
+  php8.3-bcmath php8.3-intl php8.3-readline unzip</code></pre>
+            </div>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">2</div>
+          <div class="step-body">
+            <h4>Configure MySQL</h4>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">sudo service mysql start
+sudo mysql -e "CREATE USER 'deprixa'@'localhost' IDENTIFIED BY 'secret';"
+sudo mysql -e "CREATE DATABASE deprixa_plus;"
+sudo mysql -e "GRANT ALL PRIVILEGES ON deprixa_plus.* TO 'deprixa'@'localhost';"
+sudo mysql -e "FLUSH PRIVILEGES;"</code></pre>
+            </div>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">3</div>
+          <div class="step-body">
+            <h4>Extract and Install Project</h4>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash"># Extract ZIP to /var/www/deprixa-plus
+cd /var/www/deprixa-plus
+sudo chown -R $USER:www-data .
+composer install
+cp .env.example .env
+php artisan key:generate
+npm install &amp;&amp; npm run build
+php artisan storage:link
+chmod -R 775 storage bootstrap/cache</code></pre>
+            </div>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">4</div>
+          <div class="step-body">
+            <h4>Configure Nginx Virtual Host</h4>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">nginx — /etc/nginx/sites-available/deprixa-plus</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-nginx">server {
+    listen 80;
+    server_name deprixa.test;
+    root /var/www/deprixa-plus/public;
+    index index.php;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+}</code></pre>
+            </div>
+            <div class="code-block" style="margin-top:0.75rem;">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">sudo ln -s /etc/nginx/sites-available/deprixa-plus /etc/nginx/sites-enabled/
+sudo nginx -t &amp;&amp; sudo service nginx restart</code></pre>
+            </div>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">5</div>
+          <div class="step-body">
+            <h4>Update Windows Hosts File and Run Wizard</h4>
+            <p>Open <code>C:\Windows\System32\drivers\etc\hosts</code> in Notepad (as Administrator) and add:</p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">hosts</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">127.0.0.1   deprixa.test</code></pre>
+            </div>
+            <p style="margin-top:0.75rem;">Set <code>APP_URL=http://deprixa.test</code> in <code>.env</code> and visit <code>http://deprixa.test/install</code>. Use host <code>127.0.0.1</code>, user <code>deprixa</code>, password <code>secret</code> in the wizard.</p>
+          </div>
+        </li>
+      </ol>
+
+      <div class="callout callout-info" style="margin-top:1rem;">
+        <div class="callout-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="callout-body">
+          <p class="callout-title">Pro Tip</p>
+          <p>Store your project files inside the WSL filesystem (e.g., <code>/var/www/</code>) rather than on the Windows mount (<code>/mnt/c/</code>) for significantly better I/O performance. You can access WSL files from Windows Explorer at <code>\\wsl$\Ubuntu</code>.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- GUIDE 7: DDEV -->
+    <!-- ============================================================ -->
+    <div id="local-ddev">
+      <h3 style="margin-top:2.5rem;">7. DDEV (Cross-platform)</h3>
+      <p>DDEV is an open-source Docker-based local development tool with per-project configuration files. It supports Laravel out of the box and provides automatic HTTPS, database management, and easy sharing.</p>
+
+      <div class="callout callout-info" style="margin-bottom:1rem;">
+        <div class="callout-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="callout-body">
+          <p class="callout-title">Prerequisites</p>
+          <p><strong>Docker Desktop</strong> and <strong>DDEV</strong> must be installed. Install DDEV via Homebrew (<code>brew install ddev/ddev/ddev</code>) on macOS/Linux, or via the official installer on Windows. See <a href="https://ddev.readthedocs.io" target="_blank">ddev.readthedocs.io</a> for details.</p>
+        </div>
+      </div>
+
+      <ol class="step-list">
+        <li class="step-card">
+          <div class="step-number">1</div>
+          <div class="step-body">
+            <h4>Configure DDEV Project</h4>
+            <p>Extract the ZIP to a folder and initialize DDEV:</p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">cd deprixa-plus
+ddev config --project-type=laravel --docroot=public --php-version=8.3</code></pre>
+            </div>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">2</div>
+          <div class="step-body">
+            <h4>Start DDEV and Install Dependencies</h4>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">ddev start
+ddev composer install
+ddev exec cp .env.example .env
+ddev artisan key:generate
+ddev npm install
+ddev npm run build
+ddev artisan storage:link</code></pre>
+            </div>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">3</div>
+          <div class="step-body">
+            <h4>Configure Environment for DDEV</h4>
+            <p>Edit <code>.env</code> inside the project with the DDEV database credentials:</p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">.env</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">APP_URL=https://deprixa-plus.ddev.site
+DB_HOST=db
+DB_PORT=3306
+DB_DATABASE=db
+DB_USERNAME=db
+DB_PASSWORD=db</code></pre>
+            </div>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">4</div>
+          <div class="step-body">
+            <h4>Run the Installation Wizard</h4>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">URL</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">https://deprixa-plus.ddev.site/install</code></pre>
+            </div>
+            <p style="margin-top:0.75rem;">In the wizard database step, use host <code>db</code>, user <code>db</code>, password <code>db</code>, database <code>db</code>.</p>
+          </div>
+        </li>
+      </ol>
+
+      <div class="callout callout-info" style="margin-top:1rem;">
+        <div class="callout-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="callout-body">
+          <p class="callout-title">Pro Tip</p>
+          <p>DDEV provides HTTPS automatically. Use <code>ddev describe</code> to see all URLs and credentials. Use <code>ddev share</code> to create a temporary public URL for sharing your local site with others.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- GUIDE 8: Native Linux -->
+    <!-- ============================================================ -->
+    <div id="local-linux">
+      <h3 style="margin-top:2.5rem;">8. Native Linux (Ubuntu / Debian)</h3>
+      <p>Install a full LEMP stack directly on your Linux machine. This gives you a production-like environment without any abstraction layers.</p>
+
+      <div class="callout callout-info" style="margin-bottom:1rem;">
+        <div class="callout-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="callout-body">
+          <p class="callout-title">Prerequisites</p>
+          <p>Ubuntu 22.04/24.04 or Debian 12+. You will install <strong>Nginx</strong>, <strong>MySQL 8</strong>, <strong>PHP 8.3-FPM</strong>, <strong>Composer</strong>, and <strong>Node.js 20+ LTS</strong> via apt and official repositories.</p>
+        </div>
+      </div>
+
+      <ol class="step-list">
+        <li class="step-card">
+          <div class="step-number">1</div>
+          <div class="step-body">
+            <h4>Install the LEMP Stack</h4>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">sudo apt update &amp;&amp; sudo apt install -y nginx mysql-server \
+  php8.3-fpm php8.3-mysql php8.3-mbstring php8.3-xml php8.3-curl \
+  php8.3-zip php8.3-gd php8.3-bcmath php8.3-intl unzip
+
+# Install Composer
+curl -sS https://getcomposer.org/installer | php
+sudo mv composer.phar /usr/local/bin/composer
+
+# Install Node.js 20 LTS
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs</code></pre>
+            </div>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">2</div>
+          <div class="step-body">
+            <h4>Set Up MySQL and Project</h4>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">sudo mysql -e "CREATE DATABASE deprixa_plus;"
+sudo mysql -e "CREATE USER 'deprixa'@'localhost' IDENTIFIED BY 'secret';"
+sudo mysql -e "GRANT ALL ON deprixa_plus.* TO 'deprixa'@'localhost';"
+
+# Extract project
+cd /var/www/deprixa-plus
+sudo chown -R $USER:www-data .
+composer install
+cp .env.example .env
+php artisan key:generate
+npm install &amp;&amp; npm run build
+php artisan storage:link
+chmod -R 775 storage bootstrap/cache</code></pre>
+            </div>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">3</div>
+          <div class="step-body">
+            <h4>Quick Test with Artisan Serve (Optional)</h4>
+            <p>For quick testing without configuring Nginx, you can use Laravel's built-in server:</p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">php artisan serve --host=0.0.0.0 --port=8000
+# Visit http://localhost:8000/install</code></pre>
+            </div>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">4</div>
+          <div class="step-body">
+            <h4>Production-like Nginx Configuration (Recommended)</h4>
+            <p>For a proper setup, create an Nginx vhost:</p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">nginx — /etc/nginx/sites-available/deprixa-plus</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-nginx">server {
+    listen 80;
+    server_name deprixa-plus.local;
+    root /var/www/deprixa-plus/public;
+    index index.php;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+}</code></pre>
+            </div>
+            <div class="code-block" style="margin-top:0.75rem;">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">sudo ln -s /etc/nginx/sites-available/deprixa-plus /etc/nginx/sites-enabled/
+sudo nginx -t &amp;&amp; sudo systemctl restart nginx
+# Add "127.0.0.1 deprixa-plus.local" to /etc/hosts
+# Visit http://deprixa-plus.local/install</code></pre>
+            </div>
+          </div>
+        </li>
+      </ol>
+
+      <div class="callout callout-info" style="margin-top:1rem;">
+        <div class="callout-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="callout-body">
+          <p class="callout-title">Pro Tip</p>
+          <p>Use <code>php artisan serve</code> for quick testing and Nginx for a production-like environment. For active frontend development, run <code>npm run dev</code> in a separate terminal for hot module replacement with Vite.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- GUIDE 9: MAMP -->
+    <!-- ============================================================ -->
+    <div id="local-mamp">
+      <h3 style="margin-top:2.5rem;">9. MAMP (macOS)</h3>
+      <p>MAMP is a classic local server environment for macOS that bundles Apache, MySQL, and PHP with a graphical interface.</p>
+
+      <div class="callout callout-info" style="margin-bottom:1rem;">
+        <div class="callout-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="callout-body">
+          <p class="callout-title">Prerequisites</p>
+          <p>Download and install <strong>MAMP</strong> from <a href="https://www.mamp.info" target="_blank">mamp.info</a>. Also install <strong>Composer</strong> globally and <strong>Node.js 20+ LTS</strong>. In MAMP, go to <strong>Preferences → PHP</strong> and select PHP 8.2 or 8.3.</p>
+        </div>
+      </div>
+
+      <ol class="step-list">
+        <li class="step-card">
+          <div class="step-number">1</div>
+          <div class="step-body">
+            <h4>Place the Files</h4>
+            <p>Extract the downloaded ZIP into MAMP's document root:</p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">path</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">/Applications/MAMP/htdocs/deprixa-plus/</code></pre>
+            </div>
+            <p style="margin-top:0.75rem;">The file <code>artisan</code> must be at the root of this folder.</p>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">2</div>
+          <div class="step-body">
+            <h4>Start MAMP and Create Database</h4>
+            <p>Open MAMP and start both <strong>Apache</strong> and <strong>MySQL</strong> services. Go to <strong>MAMP → Preferences → PHP</strong> and confirm PHP 8.2 or 8.3 is selected.</p>
+            <p>Create an empty database using phpMyAdmin at <code>http://localhost:8888/phpmyadmin</code>.</p>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">3</div>
+          <div class="step-body">
+            <h4>Install Dependencies</h4>
+            <p>On MAMP you may need to use MAMP's PHP binary explicitly:</p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash — MAMP (macOS)</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">cd /Applications/MAMP/htdocs/deprixa-plus
+/Applications/MAMP/bin/php/php8.3.x/bin/php /usr/local/bin/composer install</code></pre>
+            </div>
+            <p style="margin-top:0.75rem;">If Composer is not in your PATH, download it from <code>getcomposer.org</code> and run it as <code>php composer.phar install</code>.</p>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">4</div>
+          <div class="step-body">
+            <h4>Configure Environment</h4>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">cp .env.example .env
+php artisan key:generate</code></pre>
+            </div>
+            <p style="margin-top:0.75rem;">Open <code>.env</code> and set <code>APP_URL=http://localhost:8888/deprixa-plus/public</code> (adjust port to match MAMP's Apache port — default is 8888). Set <code>APP_ENV=local</code> and <code>APP_DEBUG=true</code>.</p>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">5</div>
+          <div class="step-body">
+            <h4>Build Frontend and Create Symlink</h4>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">npm install &amp;&amp; npm run build
+php artisan storage:link</code></pre>
+            </div>
+            <p style="margin-top:0.75rem;">For active development, use <code>npm run dev</code> instead of <code>npm run build</code> for hot module replacement.</p>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">6</div>
+          <div class="step-body">
+            <h4>Run the Installation Wizard</h4>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">URL</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">http://localhost:8888/deprixa-plus/public/install</code></pre>
+            </div>
+            <p style="margin-top:0.75rem;">Follow the 5-step wizard. Use <code>127.0.0.1</code> as the host, <code>3306</code> as the port (or <code>8889</code> if using MAMP default MySQL port), and <code>root</code> / <code>root</code> as credentials.</p>
+          </div>
+        </li>
+      </ol>
+
+      <div class="callout callout-info" style="margin-top:1rem;">
+        <div class="callout-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="callout-body">
+          <p class="callout-title">Pro Tip</p>
+          <p>MAMP's default MySQL port is <code>8889</code> (not the standard <code>3306</code>). Check <strong>MAMP → Preferences → Ports</strong> to confirm. If using MAMP Pro, you can set up custom virtual hosts for cleaner URLs like <code>deprixa-plus.test</code>.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- GUIDE 10: XAMPP -->
+    <!-- ============================================================ -->
+    <div id="local-xampp">
+      <h3 style="margin-top:2.5rem;">10. XAMPP (Windows / macOS)</h3>
+      <p>XAMPP is a popular cross-platform Apache, MySQL, PHP, and Perl distribution. It is easy to install and works on both Windows and macOS.</p>
+
+      <div class="callout callout-info" style="margin-bottom:1rem;">
+        <div class="callout-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="callout-body">
+          <p class="callout-title">Prerequisites</p>
+          <p>Download and install <strong>XAMPP</strong> from <a href="https://www.apachefriends.org" target="_blank">apachefriends.org</a> (choose the PHP 8.2+ version). Also install <strong>Composer</strong> globally and <strong>Node.js 20+ LTS</strong>.</p>
+        </div>
+      </div>
+
+      <ol class="step-list">
+        <li class="step-card">
+          <div class="step-number">1</div>
+          <div class="step-body">
+            <h4>Place the Files</h4>
+            <p>Extract the downloaded ZIP into XAMPP's document root:</p>
+            <ul>
+              <li><strong>Windows:</strong> <code>C:\xampp\htdocs\deprixa-plus\</code></li>
+              <li><strong>macOS:</strong> <code>/Applications/XAMPP/htdocs/deprixa-plus/</code></li>
+            </ul>
+            <p>The file <code>artisan</code> must be at the root of this folder.</p>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">2</div>
+          <div class="step-body">
+            <h4>Start XAMPP and Create Database</h4>
+            <p>Open the XAMPP Control Panel and start <strong>Apache</strong> and <strong>MySQL</strong>. Then open phpMyAdmin at <code>http://localhost/phpmyadmin</code> and create a new database named <code>deprixa_plus</code> with <code>utf8mb4_unicode_ci</code> collation.</p>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">3</div>
+          <div class="step-body">
+            <h4>Install Dependencies</h4>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash — XAMPP (Windows)</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">cd C:\xampp\htdocs\deprixa-plus
+composer install
+cp .env.example .env
+php artisan key:generate</code></pre>
+            </div>
+            <div class="code-block" style="margin-top:0.75rem;">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash — XAMPP (macOS)</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">cd /Applications/XAMPP/htdocs/deprixa-plus
+composer install
+cp .env.example .env
+php artisan key:generate</code></pre>
+            </div>
+            <p style="margin-top:0.75rem;">Set <code>APP_URL=http://localhost/deprixa-plus/public</code>, <code>APP_ENV=local</code>, and <code>APP_DEBUG=true</code> in <code>.env</code>.</p>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">4</div>
+          <div class="step-body">
+            <h4>Build Frontend and Create Symlink</h4>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">bash</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">npm install &amp;&amp; npm run build
+php artisan storage:link</code></pre>
+            </div>
+            <p style="margin-top:0.75rem;">For active development, use <code>npm run dev</code> instead of <code>npm run build</code> for hot module replacement.</p>
+          </div>
+        </li>
+        <li class="step-card">
+          <div class="step-number">5</div>
+          <div class="step-body">
+            <h4>Run the Installation Wizard</h4>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+                <span class="code-block-lang">URL</span>
+                <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+              </div>
+              <pre><code class="language-bash">http://localhost/deprixa-plus/public/install</code></pre>
+            </div>
+            <p style="margin-top:0.75rem;">Follow the 5-step wizard. Default XAMPP MySQL credentials: host <code>127.0.0.1</code>, port <code>3306</code>, user <code>root</code>, password empty.</p>
+          </div>
+        </li>
+      </ol>
+
+      <div class="callout callout-info" style="margin-top:1rem;">
+        <div class="callout-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="callout-body">
+          <p class="callout-title">Pro Tip</p>
+          <p>On Windows, if PHP or Composer are not recognized in the command prompt, add XAMPP's PHP directory to your system PATH: <code>C:\xampp\php</code>. On macOS, you may need to use the full path: <code>/Applications/XAMPP/bin/php</code>.</p>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- INSTALLATION STEPS -->
+  <section class="doc-section">
+    <h2>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      Installation Steps
+    </h2>
+    <p>Deprixa Plus uses a <strong>web-based installation wizard</strong>. You prepare the server via the command line (steps 1–6), then complete the setup through your browser (step 7). Each step must complete successfully before proceeding to the next.</p>
+
+    <ol class="step-list">
+      <li class="step-card">
+        <div class="step-number">1</div>
+        <div class="step-body">
+          <h4>Extract the Source Code</h4>
+          <p>Download the ZIP file from your Envato purchase page (CodeCanyon). Log in to your Envato account, go to your purchases, find Deprixa Plus, and click <strong>Download &rarr; All files &amp; documentation</strong>.</p>
+          <p>Extract the downloaded ZIP to your web server directory. For example:</p>
+          <ul>
+            <li><strong>Linux VPS/production:</strong> <code>/var/www/html/deprixa-plus</code></li>
+            <li><strong>MAMP (macOS):</strong> <code>/Applications/MAMP/htdocs/deprixa-plus</code></li>
+            <li><strong>XAMPP (Windows/macOS):</strong> <code>C:\xampp\htdocs\deprixa-plus</code></li>
+          </ul>
+          <p>Upload the contents of the ZIP so that the <code>artisan</code> file is directly at the root of your chosen directory (e.g., <code>/var/www/html/deprixa-plus/artisan</code>).</p>
+        </div>
+      </li>
+
+      <li class="step-card">
+        <div class="step-number">2</div>
+        <div class="step-body">
+          <h4>Install PHP Dependencies</h4>
+          <p>Run Composer to install all backend packages. Use <code>--no-dev</code> in production to exclude development-only packages and <code>--optimize-autoloader</code> for a performance-optimized class map.</p>
+          <div class="code-block">
+            <div class="code-block-header">
+              <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+              <span class="code-block-lang">bash</span>
+              <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+            </div>
+            <pre><code class="language-bash">composer install --no-dev --optimize-autoloader</code></pre>
+          </div>
+        </div>
+      </li>
+
+      <li class="step-card">
+        <div class="step-number">3</div>
+        <div class="step-body">
+          <h4>Configure the Environment File</h4>
+          <p>Copy the example environment file and generate a new application encryption key. The key must be generated before running any other Artisan commands.</p>
+          <div class="code-block">
+            <div class="code-block-header">
+              <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+              <span class="code-block-lang">bash</span>
+              <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+            </div>
+            <pre><code class="language-bash">cp .env.example .env
+php artisan key:generate</code></pre>
+          </div>
+          <p>Open <code>.env</code> with your preferred editor and fill in at minimum the <code>APP_URL</code> and mail settings. The database credentials will be configured through the wizard in step 7.</p>
+        </div>
+      </li>
+
+      <li class="step-card">
+        <div class="step-number">4</div>
+        <div class="step-body">
+          <h4>Build Frontend Assets</h4>
+          <div class="callout callout-info" style="margin-bottom:1rem;">
+            <div class="callout-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <div class="callout-body">
+              <p class="callout-title">Pre-built assets included in the ZIP</p>
+              <p>The distribution ZIP already includes the compiled frontend in <code>public/build/</code>. If that folder exists and contains a <code>manifest.json</code>, <strong>you can skip this step entirely</strong> — Node.js and npm are NOT required on the production server. Only run this step if you modified the frontend source code or if the <code>public/build/</code> folder is missing.</p>
+            </div>
+          </div>
+          <p>If you need to rebuild the frontend (e.g., after modifying React source files), install Node dependencies and compile. Always use <code>npm run build</code> on production (not <code>dev</code>):</p>
+          <div class="code-block">
+            <div class="code-block-header">
+              <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+              <span class="code-block-lang">bash</span>
+              <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+            </div>
+            <pre><code class="language-bash">npm install
+npm run build</code></pre>
+          </div>
+          <p style="margin-top:0.75rem;">The <code>node_modules/</code> folder (~500 MB) is only needed during the build — <strong>do not upload it to production</strong>. Only the compiled output in <code>public/build/</code> needs to be present on the server.</p>
+        </div>
+      </li>
+
+      <li class="step-card">
+        <div class="step-number">5</div>
+        <div class="step-body">
+          <h4>Configure Nginx Web Server</h4>
+          <p>Point your Nginx server block to the <code>/public</code> directory. Below is a complete, production-ready configuration:</p>
+          <div class="code-block">
+            <div class="code-block-header">
+              <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+              <span class="code-block-lang">nginx</span>
+              <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+            </div>
+            <pre><code class="language-nginx">server {
+    listen 80;
+    listen [::]:80;
+    server_name yourdomain.com www.yourdomain.com;
+    root /var/www/deprixa-plus/public;
+
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-Content-Type-Options "nosniff";
+
+    index index.php;
+
+    charset utf-8;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /robots.txt  { access_log off; log_not_found off; }
+
+    error_page 404 /index.php;
+
+    location ~ \.php$ {
+        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        include fastcgi_params;
+        fastcgi_hide_header X-Powered-By;
+    }
+
+    location ~ /\.(?!well-known).* {
+        deny all;
+    }
+
+    client_max_body_size 64M;
+}</code></pre>
+          </div>
+          <p>After saving the config, enable it and test:</p>
+          <div class="code-block">
+            <div class="code-block-header">
+              <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+              <span class="code-block-lang">bash</span>
+              <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+            </div>
+            <pre><code class="language-bash">ln -s /etc/nginx/sites-available/deprixa /etc/nginx/sites-enabled/
+nginx -t
+systemctl reload nginx</code></pre>
+          </div>
+        </div>
+      </li>
+
+      <li class="step-card">
+        <div class="step-number">6</div>
+        <div class="step-body">
+          <h4>Set Directory Permissions and Storage Symlink</h4>
+          <p>Laravel needs write access to <code>storage/</code> and <code>bootstrap/cache/</code>. Set the owner to your web server user (typically <code>www-data</code> on Ubuntu). Then create the public storage symlink.</p>
+          <div class="code-block">
+            <div class="code-block-header">
+              <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+              <span class="code-block-lang">bash</span>
+              <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+            </div>
+            <pre><code class="language-bash">chown -R www-data:www-data /var/www/deprixa-plus
+chmod -R 775 /var/www/deprixa-plus/storage
+chmod -R 775 /var/www/deprixa-plus/bootstrap/cache
+php artisan storage:link</code></pre>
+          </div>
+        </div>
+      </li>
+
+      <li class="step-card">
+        <div class="step-number">7</div>
+        <div class="step-body">
+          <h4>Run the Installation Wizard</h4>
+          <p>Open your browser and navigate to <code>https://yourdomain.com/install</code>. The wizard will guide you through 5 steps:</p>
+
+          <div class="callout callout-info" style="margin: 1rem 0;">
+            <div class="callout-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <div class="callout-body">
+              <p class="callout-title">Wizard URL</p>
+              <p>Navigate to <code>/install</code> on your domain. For example: <code>https://app.yourdomain.com/install</code>. The wizard is only accessible before the application has been installed. Once installation is complete, this URL is disabled automatically.</p>
+            </div>
+          </div>
+
+          <h4 style="margin-top: 1.5rem;">Step 1 — Requirements Check</h4>
+          <p>The wizard automatically checks that your PHP version, required extensions (<code>PDO</code>, <code>OpenSSL</code>, <code>cURL</code>, <code>Zip</code>, <code>Mbstring</code>, <code>GD</code>), and directory permissions are met. All checks must pass before continuing.</p>
+          <p><strong>URL:</strong> <code>/install</code></p>
+          <img src="images/install/1_WELCOME.png" alt="Step 1 — Requirements check screen showing all PHP extensions and directory permissions" style="max-width: 100%; border-radius: 8px; border: 1px solid #e5e7eb; margin: 0.75rem 0;" />
+
+          <h4 style="margin-top: 1.5rem;">Step 2 — License Validation</h4>
+          <p>Validates your Envato purchase. Enter your <strong>Envato Purchase Code</strong> and your <strong>Envato username</strong>. The system contacts the license server to confirm the purchase is valid before proceeding.</p>
+          <p><strong>URL:</strong> <code>/install/license</code></p>
+          <img src="images/install/2-LICENSE.png" alt="Step 2 — License validation screen with purchase code and username fields" style="max-width: 100%; border-radius: 8px; border: 1px solid #e5e7eb; margin: 0.75rem 0;" />
+
+          <h4 style="margin-top: 1.5rem;">Step 3 — Database &amp; Company</h4>
+          <p>Enter your MySQL connection details (host, port, database name, username, password) and your company information (name, email, phone, country, address). The wizard creates the database if it does not exist and imports the application schema automatically.</p>
+          <p><strong>URL:</strong> <code>/install/database</code></p>
+          <img src="images/install/3_DATABASE.png" alt="Step 3 — Database configuration and company information form" style="max-width: 100%; border-radius: 8px; border: 1px solid #e5e7eb; margin: 0.75rem 0;" />
+          <p style="font-size: 0.9rem; color: #6b7280;">After entering your credentials, click <strong>Test Connection</strong> to verify the database is reachable before proceeding:</p>
+          <img src="images/install/4_DATABASE_TEST.png" alt="Step 3 — Database connection test successful" style="max-width: 100%; border-radius: 8px; border: 1px solid #e5e7eb; margin: 0.75rem 0;" />
+
+          <h4 style="margin-top: 1.5rem;">Step 4 — Admin User</h4>
+          <p>Create the first administrator account. Enter a name, email address, and password. This account will have full Super Admin access to the system.</p>
+          <p><strong>URL:</strong> <code>/install/admin</code></p>
+          <img src="images/install/5_ADMINISTRATOR_ACCOUNT.png" alt="Step 4 — Administrator account creation with name, email and password fields" style="max-width: 100%; border-radius: 8px; border: 1px solid #e5e7eb; margin: 0.75rem 0;" />
+
+          <h4 style="margin-top: 1.5rem;">Step 5 — Preferences</h4>
+          <p>Configure the system defaults: language (Spanish or English), timezone, currency, date format, weight unit (kg/lb), and dimension unit (cm/in). You can also load optional demo data to explore the system with sample shipments and customers.</p>
+          <p><strong>URL:</strong> <code>/install/preferences</code></p>
+          <img src="images/install/6_PREFERENCE_SYSTEM.png" alt="Step 5 — System preferences: language, timezone, currency, date format, units" style="max-width: 100%; border-radius: 8px; border: 1px solid #e5e7eb; margin: 0.75rem 0;" />
+
+          <h4 style="margin-top: 1.5rem;">Installation Complete</h4>
+          <p>Once all steps are finished, the wizard displays a success screen. You will be redirected to the login page.</p>
+          <img src="images/install/7_WELCOME_BACK.png" alt="Installation complete — Welcome back screen with login redirect" style="max-width: 100%; border-radius: 8px; border: 1px solid #e5e7eb; margin: 0.75rem 0;" />
+
+          <div class="callout callout-warning" style="margin: 1rem 0;">
+            <div class="callout-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div class="callout-body">
+              <p class="callout-title">Where to Find Your Purchase Code</p>
+              <p>Log in to <strong>Envato Market (codecanyon.net)</strong> &rarr; click your avatar &rarr; <strong>Downloads</strong> &rarr; find Deprixa Plus &rarr; click <strong>License certificate &amp; purchase code</strong>. The purchase code is a UUID in the format <code>xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</code>.</p>
+            </div>
+          </div>
+
+          <p>When the wizard finishes, you will be redirected to <code>/login</code>. Use the admin credentials you created in Step 4 to log in.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <!-- HOSTINGER INSTALLATION -->
+  <section class="doc-section" id="hostinger-install">
+    <h2>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+      Installation on Hostinger Shared Hosting
+    </h2>
+    <p>Hostinger <strong>Business</strong> and <strong>Premium</strong> plans include SSH access and support PHP 8.2/8.3, making them compatible with Deprixa Plus. The key difference from a VPS is that you use the <strong>Hostinger File Manager or FTP</strong> to upload files and the <strong>Hostinger hPanel</strong> to create the database — SSH is used only for running Composer and Artisan commands.</p>
+
+    <div class="callout callout-warning" style="margin-bottom:1.5rem;">
+      <div class="callout-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <div class="callout-body">
+        <p class="callout-title">Important: Use the pre-built ZIP — do NOT upload node_modules</p>
+        <p>The deployment ZIP already contains <code>public/build/</code> (compiled frontend assets) and <code>vendor/</code> (PHP dependencies). <strong>You do not need Node.js, npm, or Composer on the Hostinger server.</strong> Never upload the <code>node_modules/</code> folder — it is ~500 MB and not needed on the server.</p>
+      </div>
+    </div>
+
+    <ol class="step-list">
+      <li class="step-card">
+        <div class="step-number">1</div>
+        <div class="step-body">
+          <h4>Create a MySQL Database in hPanel</h4>
+          <p>Log in to your Hostinger account → go to <strong>hPanel → Databases → MySQL Databases</strong>. Click <strong>Create a new MySQL database &amp; user</strong>. Write down the database name, username, and password — you will need them in the installation wizard.</p>
+          <p>The database host on Hostinger is typically <code>127.0.0.1</code>.</p>
+        </div>
+      </li>
+
+      <li class="step-card">
+        <div class="step-number">2</div>
+        <div class="step-body">
+          <h4>Upload the Files</h4>
+          <p>In hPanel, go to <strong>File Manager</strong> and navigate to the <code>public_html</code> folder (or a subdomain directory if you're installing on a subdomain). Upload the deployment ZIP and extract it there.</p>
+          <p>After extraction, the file structure should look like:</p>
+          <div class="code-block">
+            <div class="code-block-header">
+              <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+              <span class="code-block-lang">text</span>
+            </div>
+            <pre><code>public_html/
+├── app/
+├── bootstrap/
+├── config/
+├── database/
+├── public/          ← web root should point here
+│   ├── build/       ← compiled frontend (must exist)
+│   └── index.php
+├── resources/
+├── routes/
+├── storage/
+├── vendor/          ← PHP dependencies (must exist)
+├── .env.example
+└── artisan</code></pre>
+          </div>
+          <p style="margin-top:0.75rem;">If you are installing in a subdomain, set the subdomain's document root to point to the <code>public/</code> folder inside the uploaded directory. Do this in <strong>hPanel → Subdomains → Edit → Document Root</strong>.</p>
+        </div>
+      </li>
+
+      <li class="step-card">
+        <div class="step-number">3</div>
+        <div class="step-body">
+          <h4>Configure .env via File Manager</h4>
+          <p>In File Manager, find <code>.env.example</code>, duplicate it and rename the copy to <code>.env</code>. Open <code>.env</code> and set at minimum:</p>
+          <div class="code-block">
+            <div class="code-block-header">
+              <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+              <span class="code-block-lang">env</span>
+              <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+            </div>
+            <pre><code>APP_NAME="Deprixa Plus"
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://yourdomain.com
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_database_name
+DB_USERNAME=your_database_user
+DB_PASSWORD=your_database_password</code></pre>
+          </div>
+          <p style="margin-top:0.75rem;">Leave <code>APP_KEY</code> blank for now — you will generate it via SSH in the next step.</p>
+        </div>
+      </li>
+
+      <li class="step-card">
+        <div class="step-number">4</div>
+        <div class="step-body">
+          <h4>Connect via SSH and Generate App Key</h4>
+          <p>In hPanel, go to <strong>Advanced → SSH Access</strong> to get your SSH credentials and enable SSH if not already active. Then connect from your terminal:</p>
+          <div class="code-block">
+            <div class="code-block-header">
+              <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+              <span class="code-block-lang">bash — your local terminal</span>
+              <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+            </div>
+            <pre><code class="language-bash">ssh username@yourdomain.com -p 65002</code></pre>
+          </div>
+          <p style="margin-top:0.75rem;">Once connected, navigate to the project folder and generate the app key:</p>
+          <div class="code-block">
+            <div class="code-block-header">
+              <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+              <span class="code-block-lang">bash — SSH session on Hostinger</span>
+              <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+            </div>
+            <pre><code class="language-bash">cd ~/public_html            # or ~/domains/yourdomain.com/public_html
+php artisan key:generate
+php artisan storage:link</code></pre>
+          </div>
+          <p style="margin-top:0.75rem;">If you installed into a subdirectory (e.g., <code>public_html/app/</code>), adjust the path accordingly. The <code>storage:link</code> command creates the symlink so uploaded files (logos, attachments) are publicly accessible.</p>
+        </div>
+      </li>
+
+      <li class="step-card">
+        <div class="step-number">5</div>
+        <div class="step-body">
+          <h4>Set Directory Permissions via SSH</h4>
+          <div class="code-block">
+            <div class="code-block-header">
+              <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+              <span class="code-block-lang">bash — SSH session on Hostinger</span>
+              <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+            </div>
+            <pre><code class="language-bash">chmod -R 775 storage bootstrap/cache</code></pre>
+          </div>
+        </div>
+      </li>
+
+      <li class="step-card">
+        <div class="step-number">6</div>
+        <div class="step-body">
+          <h4>Configure the Document Root</h4>
+          <p>Hostinger must serve the <code>public/</code> directory, not the root of the project. In hPanel:</p>
+          <ul>
+            <li>For the <strong>main domain</strong>: go to <strong>hPanel → Hosting → Manage → Files → Document Root</strong> and set it to <code>public_html/public</code> (if you placed the project files directly in <code>public_html</code>).</li>
+            <li>For a <strong>subdomain</strong>: go to <strong>hPanel → Subdomains → Edit → Document Root</strong> and point it to the <code>public/</code> subfolder inside your uploaded directory.</li>
+          </ul>
+          <p>If your hosting plan does not allow changing the document root, you can move the contents of the <code>public/</code> folder into <code>public_html/</code> and update <code>public/index.php</code> paths — but this is not recommended. Using a subdomain with the correct document root is the cleanest approach.</p>
+        </div>
+      </li>
+
+      <li class="step-card">
+        <div class="step-number">7</div>
+        <div class="step-body">
+          <h4>Run the Installation Wizard</h4>
+          <p>Open your browser and navigate to <code>https://yourdomain.com/install</code>. Follow the 5-step wizard. In Step 3, enter the database credentials you created in Step 1 of this guide.</p>
+          <div class="callout callout-info" style="margin-top:0.75rem;">
+            <div class="callout-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <div class="callout-body">
+              <p class="callout-title">Cron Job on Hostinger</p>
+              <p>After installation, add a cron job in <strong>hPanel → Advanced → Cron Jobs</strong>. Set the command to: <code>php ~/public_html/artisan schedule:run</code> and the interval to <strong>every minute</strong> (use the "Once per minute" preset). This is required for scheduled notifications and auto-status updates to work.</p>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ENV VARIABLES REFERENCE -->
+  <section class="doc-section">
+    <h2>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Environment Variables Reference (.env)
+    </h2>
+    <p>All configuration is done through the <code>.env</code> file at the project root. Never commit this file to version control. Database credentials entered in the installation wizard are written to this file automatically.</p>
+
+    <h3>Application Settings</h3>
+    <table class="env-table">
+      <thead>
+        <tr><th>Variable</th><th>Example Value</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>APP_NAME</td><td>Deprixa Plus</td><td>Application name shown in emails, browser tab, and UI header.</td></tr>
+        <tr><td>APP_ENV</td><td>production</td><td>Set to <code>production</code> on live servers. <code>local</code> for development. Controls error verbosity.</td></tr>
+        <tr><td>APP_KEY</td><td>base64:…</td><td>Auto-generated by <code>php artisan key:generate</code>. Never change on production — all encrypted data will become unreadable.</td></tr>
+        <tr><td>APP_DEBUG</td><td>false</td><td>Set to <code>false</code> in production. When <code>true</code>, detailed error stack traces are shown to users — a major security risk.</td></tr>
+        <tr><td>APP_URL</td><td>https://app.yourdomain.com</td><td>Full URL of your installation including protocol. Used for asset URLs, email links, and API base paths.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Database</h3>
+    <p>These values are written automatically by the installation wizard when you complete Step 3. You can also set or update them manually here.</p>
+    <table class="env-table">
+      <thead>
+        <tr><th>Variable</th><th>Example Value</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>DB_CONNECTION</td><td>mysql</td><td>Database driver. Supported: <code>mysql</code>, <code>mariadb</code>.</td></tr>
+        <tr><td>DB_HOST</td><td>127.0.0.1</td><td>Database server hostname or IP. Use <code>127.0.0.1</code> for local, or your RDS/Cloud DB endpoint.</td></tr>
+        <tr><td>DB_PORT</td><td>3306</td><td>MySQL default port. Change if your DB server uses a non-standard port.</td></tr>
+        <tr><td>DB_DATABASE</td><td>deprixa</td><td>Name of the database. The wizard creates it automatically if it does not exist.</td></tr>
+        <tr><td>DB_USERNAME</td><td>deprixa_user</td><td>Database user. Should have SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX privileges.</td></tr>
+        <tr><td>DB_PASSWORD</td><td>str0ngP@ssword!</td><td>Database user password. Use a strong, randomly generated password.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Cache, Session &amp; Queue</h3>
+    <table class="env-table">
+      <thead>
+        <tr><th>Variable</th><th>Example Value</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>CACHE_DRIVER</td><td>redis</td><td>Cache backend. Options: <code>redis</code> (recommended), <code>file</code>, <code>database</code>, <code>array</code>.</td></tr>
+        <tr><td>SESSION_DRIVER</td><td>redis</td><td>Session storage. Options: <code>redis</code> (recommended), <code>file</code>, <code>cookie</code>, <code>database</code>.</td></tr>
+        <tr><td>QUEUE_CONNECTION</td><td>redis</td><td>Queue backend for background jobs (notifications, exports). Options: <code>redis</code>, <code>database</code>, <code>sync</code>.</td></tr>
+        <tr><td>REDIS_HOST</td><td>127.0.0.1</td><td>Redis server hostname.</td></tr>
+        <tr><td>REDIS_PORT</td><td>6379</td><td>Redis port. Default is 6379.</td></tr>
+        <tr><td>REDIS_PASSWORD</td><td>null</td><td>Redis authentication password. Set to <code>null</code> if no password is configured.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Mail Configuration</h3>
+    <table class="env-table">
+      <thead>
+        <tr><th>Variable</th><th>Example Value</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>MAIL_MAILER</td><td>smtp</td><td>Mail driver. Options: <code>smtp</code>, <code>ses</code> (AWS), <code>mailgun</code>, <code>log</code> (dev only), <code>array</code>.</td></tr>
+        <tr><td>MAIL_HOST</td><td>smtp.mailgun.org</td><td>SMTP server hostname. Use your ESP's SMTP endpoint.</td></tr>
+        <tr><td>MAIL_PORT</td><td>587</td><td>SMTP port. 587 (TLS/STARTTLS) is standard. 465 for SSL. 25 for unencrypted (not recommended).</td></tr>
+        <tr><td>MAIL_ENCRYPTION</td><td>tls</td><td>Encryption method: <code>tls</code> or <code>ssl</code>.</td></tr>
+        <tr><td>MAIL_USERNAME</td><td>postmaster@yourdomain.com</td><td>SMTP authentication username (usually your email address or API key).</td></tr>
+        <tr><td>MAIL_PASSWORD</td><td>your-smtp-password</td><td>SMTP authentication password.</td></tr>
+        <tr><td>MAIL_FROM_ADDRESS</td><td>noreply@yourdomain.com</td><td>The "From" email address for all outgoing system emails.</td></tr>
+        <tr><td>MAIL_FROM_NAME</td><td>Deprixa Plus</td><td>The "From" display name shown in email clients.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>File Storage (Optional S3)</h3>
+    <p>By default, uploaded files (logos, attachments) are stored on the local server filesystem. To use AWS S3 or a compatible object storage service instead, set the following variables.</p>
+    <table class="env-table">
+      <thead>
+        <tr><th>Variable</th><th>Example Value</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>FILESYSTEM_DISK</td><td>local</td><td>Default disk for file storage. Options: <code>local</code> (server filesystem) or <code>s3</code> (AWS S3 or compatible).</td></tr>
+        <tr><td>AWS_ACCESS_KEY_ID</td><td>AKIA…</td><td>AWS IAM access key. Required only when FILESYSTEM_DISK=s3.</td></tr>
+        <tr><td>AWS_SECRET_ACCESS_KEY</td><td>wJalrX…</td><td>AWS IAM secret key. Required only when using S3.</td></tr>
+        <tr><td>AWS_DEFAULT_REGION</td><td>us-east-1</td><td>AWS region where your S3 bucket is located.</td></tr>
+        <tr><td>AWS_BUCKET</td><td>deprixa-files</td><td>Your S3 bucket name.</td></tr>
+        <tr><td>AWS_URL</td><td>https://deprixa-files.s3.amazonaws.com</td><td>Public base URL for your S3 bucket. Used to generate file URLs.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- FIRST RUN CHECKLIST -->
+  <section class="doc-section">
+    <h2>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      First-Run Checklist
+    </h2>
+    <p>After the installation wizard completes, log in with the admin account you created and finish these steps before going live:</p>
+    <ul>
+      <li>Set your company logo and contact details (<strong>Settings &rarr; Company Profile</strong>)</li>
+      <li>Configure your mail settings and send a test email (<strong>Settings &rarr; Notifications</strong>)</li>
+      <li>Review your timezone and date format (<strong>Settings &rarr; Locale</strong>)</li>
+      <li>Create at least one branch (<strong>Settings &rarr; Branches</strong>)</li>
+      <li>Configure shipment service types (<strong>Settings &rarr; Services</strong>)</li>
+      <li>Create additional user accounts and assign roles (<strong>Settings &rarr; Users</strong>)</li>
+      <li>Set up SSL (Let's Encrypt with Certbot is free and recommended)</li>
+      <li>Configure a cron job for scheduled tasks (see below)</li>
+      <li>Set up a queue worker for background jobs (Supervisord recommended)</li>
+      <li>Test the shipment creation workflow end-to-end</li>
+    </ul>
+
+    <h3>Cron Job for Scheduled Tasks</h3>
+    <p>Add the following entry to your server's crontab (<code>crontab -e</code> as the web server user or root):</p>
+    <div class="code-block">
+      <div class="code-block-header">
+        <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+        <span class="code-block-lang">cron</span>
+        <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+      </div>
+      <pre><code>* * * * * www-data php /var/www/deprixa-plus/artisan schedule:run >> /dev/null 2>&1</code></pre>
+    </div>
+
+    <h3>Queue Worker (Supervisord)</h3>
+    <p>For production, use Supervisord to keep the queue worker running. Create <code>/etc/supervisor/conf.d/deprixa-worker.conf</code>:</p>
+    <div class="code-block">
+      <div class="code-block-header">
+        <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+        <span class="code-block-lang">ini</span>
+        <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+      </div>
+      <pre><code>[program:deprixa-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=php /var/www/deprixa-plus/artisan queue:work redis --sleep=3 --tries=3 --max-time=3600
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+user=www-data
+numprocs=2
+redirect_stderr=true
+stdout_logfile=/var/log/deprixa-worker.log
+stopwaitsecs=3600</code></pre>
+    </div>
+  </section>
+
+  <!-- COMMON ERRORS -->
+  <section class="doc-section">
+    <h2>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Common Installation Errors
+    </h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Error</th>
+          <th>Cause</th>
+          <th>Fix</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>License verification fails</td>
+          <td>Wrong purchase code or Envato username, or the license server cannot be reached.</td>
+          <td>Double-check the purchase code (UUID format) and your exact Envato username. Verify the server has outbound internet access on port 443.</td>
+        </tr>
+        <tr>
+          <td>Database connection fails in wizard Step 3</td>
+          <td>MySQL is not running, the credentials are wrong, or the host is incorrect.</td>
+          <td>Run <code>systemctl status mysql</code>. Verify the host, port, username, and password. Use <code>127.0.0.1</code> instead of <code>localhost</code> for TCP connections.</td>
+        </tr>
+        <tr>
+          <td><code>No application encryption key has been specified</code></td>
+          <td>APP_KEY is empty in .env.</td>
+          <td>Run <code>php artisan key:generate</code>. Ensure the .env file exists.</td>
+        </tr>
+        <tr>
+          <td>White page / 500 error</td>
+          <td>Storage or bootstrap/cache is not writable.</td>
+          <td>Run <code>chmod -R 775 storage bootstrap/cache</code> and ensure the web server user owns these directories.</td>
+        </tr>
+        <tr>
+          <td><code>Class "App\Models\..." not found</code></td>
+          <td>Composer autoloader is outdated.</td>
+          <td>Run <code>composer dump-autoload --optimize</code>.</td>
+        </tr>
+        <tr>
+          <td>Assets not loading (404 on /build/*.js)</td>
+          <td>npm run build was not run or the public/build directory is missing.</td>
+          <td>Run <code>npm install &amp;&amp; npm run build</code>. Verify that <code>public/build/manifest.json</code> exists.</td>
+        </tr>
+        <tr>
+          <td>Images/logos not loading (404 on /storage/...)</td>
+          <td>Storage symlink not created.</td>
+          <td>Run <code>php artisan storage:link</code>. Verify that <code>public/storage</code> is a symlink.</td>
+        </tr>
+        <tr>
+          <td><code>TokenMismatchException / 419 Page Expired</code></td>
+          <td>CSRF token mismatch, usually because SESSION_DRIVER is misconfigured.</td>
+          <td>Verify CACHE_DRIVER and SESSION_DRIVER in .env. If using Redis, ensure Redis is running. Run <code>php artisan config:clear</code>.</td>
+        </tr>
+        <tr>
+          <td>Email not being sent</td>
+          <td>MAIL_* settings are wrong or queue worker is not running.</td>
+          <td>Check MAIL_* variables. Verify SMTP credentials with a tool like MailTrap. Ensure queue worker is running if using async queues.</td>
+        </tr>
+        <tr>
+          <td><code>Permission denied</code> when writing files</td>
+          <td>Web server user does not own the storage directory.</td>
+          <td>Run <code>chown -R www-data:www-data storage bootstrap/cache</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="callout callout-info">
+    <div class="callout-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    </div>
+    <div class="callout-body">
+      <p class="callout-title">Next Steps</p>
+      <p>With installation complete, explore the <a href="modules/settings.html">Settings module</a> to configure your company profile, branding, and shipment services. Then read the <a href="modules/shipments.html">Shipments module</a> documentation to understand the core workflow.</p>
+    </div>
+  </div>
+
+  <footer class="doc-footer">
+    <div class="doc-footer-inner">
+      <div class="doc-footer-brand">Deprixa <span>Plus</span> Documentation &mdash; v1.3.2</div>
+      <div class="doc-footer-links">
+        <a href="index.html">Overview</a>
+        <a href="architecture.html">Architecture</a>
+        <a href="modules/settings.html">Settings</a>
+        <a href="#">Support</a>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<script src="assets/nav.js"></script>
+<script>injectNav('getting-started', './');</script>
+</body>
+</html>

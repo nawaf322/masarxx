@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Changelog — Deprixa Plus Documentation</title>
+  <link rel="stylesheet" href="assets/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+</head>
+<body>
+<div id="header-container"></div>
+<div id="sidebar-container"></div>
+<main class="doc-content">
+  <div id="breadcrumb-container"></div>
+
+  <div class="page-header">
+    <h1>Changelog</h1>
+    <p class="subtitle">Version history and release notes for Deprixa Plus.</p>
+    <div class="badge-group">
+      <span class="badge badge-success">Latest: v1.3.2</span>
+      <span class="badge badge-info">Released 2026-04-22</span>
+    </div>
+  </div>
+
+  <!-- v1.3.2 -->
+  <div class="changelog-entry">
+    <div class="changelog-version-header">
+      <div class="changelog-version-tag">v1.3.2</div>
+      <div class="changelog-meta">
+        <span class="changelog-date">April 22, 2026</span>
+        <span class="badge badge-success">Latest Release</span>
+      </div>
+    </div>
+
+    <p class="changelog-summary">Automatic locker assignment on web registration, pre-alert numbering, staff notification, complete security: active CORS, hardened security headers (COOP, CORP, preload HSTS, object-src none), and Row Level Security completed on all models with <code>organization_id</code>.</p>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      v1.3.2 Highlights
+    </h3>
+    <ul class="changelog-list">
+      <li>Registration at <code>/register</code>: customers of the main organization receive an automatic unique locker — the first registrant creates the organization (initial installation)</li>
+      <li>Pre-alerts: human-readable number generated on creation (<code>PA-YYYY-NNNNN</code>, using DB ID — no race conditions)</li>
+      <li>Staff notification (admin/employees) on new pre-alert received via <code>broadcast()</code></li>
+      <li>CORS enabled: <code>config/cors.php</code> created + <code>HandleCors</code> registered in web and API stacks</li>
+      <li>Hardened security headers: COOP, CORP, <code>X-Permitted-Cross-Domain-Policies</code>, <code>preload</code> on HSTS, <code>object-src 'none'</code>, <code>worker-src</code></li>
+      <li>RLS completed: <code>BelongsToTenant</code> added to <code>CustomerContact</code> and <code>GeocodedAddress</code> (the only models with <code>organization_id</code> that were missing)</li>
+    </ul>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Locker &amp; Web Registration
+    </h3>
+    <ul class="changelog-list">
+      <li><strong>RegisteredUserController</strong> — branching logic: if organization exists, create customer + locker; if not, create org + admin</li>
+      <li>Locker assigned via <code>LockerCodeService::generate()</code> — respects configured format (sequential or random) per organization</li>
+      <li>Uniqueness guaranteed: service-level check + <code>UNIQUE(organization_id, code)</code> constraint in DB</li>
+      <li>After registration the customer is redirected to <code>/my-locker</code></li>
+      <li><strong>NOTE:</strong> The route <code>/register/customer/{slug}</code> keeps its behavior unchanged</li>
+    </ul>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+      Pre-Alerts
+    </h3>
+    <ul class="changelog-list">
+      <li>New column <code>pre_alerts.pre_alert_number</code> (migration <code>2026_04_22_000001</code>): <code>VARCHAR(30)</code> + composite index</li>
+      <li>Number generated in <code>PreAlertController::store()</code> format <code>PA-2026-00001</code> using <code>$preAlert->id</code></li>
+      <li>Field added to <code>PreAlert::$fillable</code></li>
+      <li>New listener <code>NotifyStaffOnPreAlertCreated</code>: notifies all staff via <code>InAppNotificationService::broadcast()</code> when a customer creates a pre-alert</li>
+      <li>Registered in <code>DomainEventServiceProvider</code> as second listener of <code>PreAlertCreated</code></li>
+      <li>Language keys added in <code>lang/es/pre_alerts.php</code> and <code>lang/en/pre_alerts.php</code>: <code>notification_staff_created_title</code> and <code>notification_staff_created_body</code></li>
+    </ul>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Security — CORS, Headers &amp; RLS
+    </h3>
+    <ul class="changelog-list">
+      <li><strong>CORS (<code>config/cors.php</code>)</strong>: paths <code>api/*</code> + <code>sanctum/csrf-cookie</code>; allowed_origins from <code>CORS_ALLOWED_ORIGINS</code> env or APP_URL; methods: GET/POST/PUT/PATCH/DELETE/OPTIONS; credentials: true; max_age: 7200s</li>
+      <li><code>HandleCors</code> registered in <code>bootstrap/app.php</code>: prepend in web stack and API stack</li>
+      <li><strong>New Security Headers:</strong>
+        <ul>
+          <li><code>X-Permitted-Cross-Domain-Policies: none</code> — blocks Flash/Adobe crossdomain.xml</li>
+          <li><code>Cross-Origin-Opener-Policy: same-origin</code> — isolates browsing context (Spectre mitigation)</li>
+          <li><code>Cross-Origin-Resource-Policy: same-origin</code> — prevents other origins from embedding resources</li>
+          <li><code>Strict-Transport-Security</code>: added <code>preload</code> (eligible for browser HSTS preload list)</li>
+          <li><code>Permissions-Policy</code>: added <code>usb=(), bluetooth=(), serial=(), hid=()</code></li>
+          <li>CSP: added <code>object-src 'none'</code> (blocks plugins), <code>worker-src 'self' blob:</code> and <code>upgrade-insecure-requests</code></li>
+        </ul>
+      </li>
+      <li><strong>RLS — Row Level Security completed:</strong> <code>BelongsToTenant</code> added to <code>CustomerContact</code> and <code>GeocodedAddress</code>. Total models with tenant scope: 34/34 (all with <code>organization_id</code>). Correctly excluded: <code>Organization</code> (is the tenant), <code>User</code> (special management), <code>PersonalAccessToken</code>, <code>SaasPlan</code>, <code>City</code>, <code>Country</code>, <code>State</code>, <code>Currency</code> (global data without tenant)</li>
+    </ul>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-4V4H6v16h12V10z"/></svg>
+      Modified Files
+    </h3>
+    <ul class="changelog-list">
+      <li><code>app/Http/Controllers/Auth/RegisteredUserController.php</code> — client/org-owner branching</li>
+      <li><code>app/Http/Controllers/PreAlertController.php</code> — generates pre_alert_number</li>
+      <li><code>app/Models/PreAlert.php</code> — pre_alert_number in fillable</li>
+      <li><code>app/Models/CustomerContact.php</code> — BelongsToTenant added</li>
+      <li><code>app/Models/GeocodedAddress.php</code> — BelongsToTenant added</li>
+      <li><code>app/Listeners/NotifyStaffOnPreAlertCreated.php</code> — new file</li>
+      <li><code>app/Providers/DomainEventServiceProvider.php</code> — staff listener registered</li>
+      <li><code>app/Http/Middleware/SecurityHeaders.php</code> — additional headers</li>
+      <li><code>bootstrap/app.php</code> — HandleCors in web and API</li>
+      <li><code>config/cors.php</code> — new file</li>
+      <li><code>lang/es/pre_alerts.php</code> and <code>lang/en/pre_alerts.php</code> — staff keys</li>
+      <li><code>database/migrations/2026_04_22_000001_add_pre_alert_number_to_pre_alerts_table.php</code></li>
+    </ul>
+  </div>
+
+  <!-- v1.3.1 -->
+  <div class="changelog-entry">
+    <div class="changelog-version-header">
+      <div class="changelog-version-tag">v1.3.1</div>
+      <div class="changelog-meta">
+        <span class="changelog-date">April 19, 2026</span>
+        <span class="badge badge-info">Previous Release</span>
+      </div>
+    </div>
+
+    <p class="changelog-summary">Complete permission system overhaul — removed all premium/orphaned permissions, added all missing Plus module permissions (Pickups, Lockers, Pre-Alerts, Commissions, Contracts, Returns, COD, Locations, Import), hardened every module route with <code>can:</code> middleware, and corrected 9 nav visibility checks. Final state: 97 permissions, all belonging to Deprixa Plus (zero premium).</p>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      v1.3.1 Highlights
+    </h3>
+    <ul class="changelog-list">
+      <li>97 permissions in total — every permission belongs to Deprixa Plus; zero premium/SaaS permissions remain in the database</li>
+      <li>7 premium permissions removed from DB and routes reguarded: <code>manage organizations</code>, <code>view saas billing</code>, <code>manage saas billing</code>, <code>recharge wallet</code>, <code>view organizations</code>, <code>manage settings</code>, <code>manage users</code> — routes now use <code>role:super-admin</code></li>
+      <li>5 settings API permissions removed: <code>settings.api.view</code>, <code>settings.api.tokens.manage</code>, <code>settings.api.clients.manage</code>, <code>settings.api.webhooks.manage</code>, <code>settings.api.logs.view</code> — routes now use <code>role:admin|super-admin</code></li>
+      <li>All module permissions properly added and gated: Pickups, Lockers, Pre-Alerts, Commissions, Contracts, Returns, COD, Locations, Import</li>
+      <li>Roles matrix now shows all 97 permissions; Admin can toggle any permission for Employee, Driver, and Customer roles</li>
+      <li>9 nav config items corrected to use the right permission for sidebar visibility</li>
+      <li>SQL dump (<code>database/sql/deprixa_lite.sql</code>) fully synchronized — migrations 114–117 added, <code>role_has_permissions</code> updated for all roles</li>
+    </ul>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Permission System Remediation
+    </h3>
+    <ul class="changelog-list">
+      <li><strong>Removed premium permissions:</strong> <code>manage organizations</code>, <code>view saas billing</code>, <code>manage saas billing</code>, <code>recharge wallet</code>, <code>view organizations</code>, <code>manage settings</code>, <code>manage users</code> — deleted from DB; routes changed to <code>role:super-admin</code></li>
+      <li><strong>Removed settings API permissions:</strong> <code>settings.api.view</code>, <code>settings.api.tokens.manage</code>, <code>settings.api.clients.manage</code>, <code>settings.api.webhooks.manage</code>, <code>settings.api.logs.view</code> — deleted from DB; routes changed to <code>role:admin|super-admin</code></li>
+      <li><strong>Added Pickups:</strong> <code>pickups.view</code>, <code>pickups.create</code>, <code>pickups.manage</code></li>
+      <li><strong>Added Lockers (admin):</strong> <code>lockers.view</code>, <code>lockers.manage</code></li>
+      <li><strong>Added Pre-Alerts:</strong> <code>pre-alerts.view</code>, <code>pre-alerts.create</code>, <code>pre-alerts.manage</code></li>
+      <li><strong>Added Commissions:</strong> <code>commissions.view</code>, <code>commissions.manage</code></li>
+      <li><strong>Added Contracts:</strong> <code>contracts.view</code>, <code>contracts.create</code>, <code>contracts.manage</code></li>
+      <li><strong>Added Returns:</strong> <code>returns.view</code>, <code>returns.create</code>, <code>returns.update</code></li>
+      <li><strong>Added COD:</strong> <code>cod.view</code>, <code>cod.collect</code>, <code>cod.remit</code></li>
+      <li><strong>Added Locations:</strong> <code>locations.view</code>, <code>locations.manage</code></li>
+      <li><strong>Added Import:</strong> <code>shipments.import</code></li>
+      <li>Migrations: <code>2026_04_19_000001_cleanup_orphaned_permissions</code>, <code>2026_04_19_000002_add_missing_module_permissions</code></li>
+    </ul>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Routes &amp; Middleware Hardening
+    </h3>
+    <ul class="changelog-list">
+      <li><code>GET /pickups/*</code> → <code>can:pickups.view</code>; mutating routes → <code>can:pickups.manage</code></li>
+      <li><code>GET /lockers/*</code> → <code>can:lockers.view</code>; mutating routes → <code>can:lockers.manage</code></li>
+      <li><code>GET /pre-alerts/*</code> → <code>can:pre-alerts.view</code>; create → <code>can:pre-alerts.create</code>; admin actions → <code>can:pre-alerts.manage</code></li>
+      <li><code>GET /commissions/*</code> → <code>can:commissions.view</code> + <code>edition:commissions</code>; mutating → <code>can:commissions.manage</code></li>
+      <li><code>GET /contracts/*</code> → <code>can:contracts.view</code> + <code>edition:contracts</code>; create → <code>can:contracts.create</code>; mutating → <code>can:contracts.manage</code></li>
+      <li><code>GET /returns/*</code> → <code>can:returns.view</code>; create → <code>can:returns.create</code>; update → <code>can:returns.update</code></li>
+      <li><code>GET /cod/*</code> → <code>can:cod.view</code>; collect → <code>can:cod.collect</code>; remit → <code>can:cod.remit</code></li>
+      <li><code>GET /locations/*</code> → <code>can:locations.view</code>; mutating → <code>can:locations.manage</code></li>
+      <li><code>POST /shipments/import</code> → <code>can:shipments.import</code></li>
+      <li><code>/settings/shipment-statuses</code> → <code>can:settings.shipment-statuses.view/manage</code></li>
+      <li><code>/settings/services</code> → <code>can:settings.services.view/manage</code></li>
+      <li><code>/settings/updates</code> → <code>can:settings.updates.view</code></li>
+      <li><code>/settings/hs-codes</code> → <code>can:settings.hs-codes.view/manage</code></li>
+      <li><code>/settings/integrations</code> → <code>can:settings.integrations.view/update</code></li>
+      <li><code>/admin/*</code> → <code>role:super-admin</code> (was <code>can:manage organizations</code>)</li>
+      <li><code>/my-billing/*</code> → <code>role:super-admin</code> (was <code>can:view saas billing</code>)</li>
+      <li><code>/api-tokens</code> + <code>/settings/api/*</code> → <code>role:admin|super-admin</code></li>
+    </ul>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+      Navigation Config Fixes
+    </h3>
+    <ul class="changelog-list">
+      <li>Warehouse nav item: <code>dispatch.create</code> → <code>warehouse.access</code></li>
+      <li>Pickups nav item: <code>dispatch.create</code> → <code>pickups.view</code></li>
+      <li>Lockers nav item: <code>dispatch.create</code> → <code>lockers.view</code></li>
+      <li>Pre-Alerts nav item: <code>dispatch.create</code> → <code>pre-alerts.view</code></li>
+      <li>Customers nav item: <code>manage users</code> → <code>customers.access</code></li>
+      <li>Contracts nav item: <code>customers.access</code> → <code>contracts.view</code></li>
+      <li>Commissions nav item: <code>finance.view</code> → <code>commissions.view</code></li>
+      <li>Rates nav item: <code>settings.shipping-config.view</code> → <code>settings.pricing.view</code></li>
+      <li>Locations nav item: <code>settings.company.view</code> → <code>locations.view</code></li>
+    </ul>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Roles Matrix
+    </h3>
+    <ul class="changelog-list">
+      <li>Settings → Roles matrix now shows all 97 permissions</li>
+      <li>All new module groups visible: Pickups, Lockers, Pre-Alerts, Commissions, Contracts, Returns, COD, POD, Customs, Locations</li>
+      <li>Super-admin: 94/97 permissions; Admin: 97/97; Employee: 40; Driver: 8; Customer: 5</li>
+      <li>Admin can toggle any permission for Employee, Driver, and Customer roles from the matrix</li>
+      <li><strong>Customer role (5 perms):</strong> <code>view dashboard</code>, <code>create shipments</code>, <code>tracking.view</code>, <code>pre-alerts.view</code>, <code>pre-alerts.create</code></li>
+      <li><strong>Driver role (8 perms):</strong> <code>view dashboard</code>, <code>dashboard.kpi.view</code>, <code>dashboard.activity.view</code>, <code>dispatch.view</code>, <code>dispatch.update</code>, <code>dispatch.access</code>, <code>change status shipments</code>, <code>tracking.view</code></li>
+      <li><strong>Employee role (40 perms):</strong> all operational permissions — shipments, dispatch, warehouse, customers, pickups, pre-alerts, lockers.view, import, returns, COD, POD, customs.view, contracts.view/create, locations.view, finance, billing.view, pricing.view, settings.shipment-statuses.view, settings.services.view</li>
+      <li><strong>Admin role (94 perms):</strong> all 94 Plus permissions</li>
+      <li><strong>Super-admin:</strong> synced to <code>Permission::all()</code> — always 100%</li>
+    </ul>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-4V4H6v16h12V10z"/></svg>
+      Database &amp; SQL Dump
+    </h3>
+    <ul class="changelog-list">
+      <li><code>database/sql/deprixa_lite.sql</code> fully synchronized with all permission changes</li>
+      <li>Migrations table: entries 114–117 added</li>
+      <li><code>role_has_permissions</code> updated for all roles (super-admin, admin, employee, driver, customer)</li>
+      <li>Zero premium permissions in the SQL dump</li>
+      <li>Migration <code>2026_04_18_000002_add_module_permissions</code> — adds pickups, lockers, pre-alerts, commissions permissions</li>
+      <li>Migration <code>2026_04_19_000001_cleanup_orphaned_permissions</code> — deletes all premium/orphaned permissions</li>
+      <li>Migration <code>2026_04_19_000002_add_missing_module_permissions</code> — adds contracts, locations, shipment-statuses, services, updates permissions</li>
+    </ul>
+  </div>
+
+  <!-- v1.3.0 -->
+  <div class="changelog-entry">
+    <div class="changelog-version-header">
+      <div class="changelog-version-tag">v1.3.0</div>
+      <div class="changelog-meta">
+        <span class="changelog-date">April 18, 2026</span>
+        <span class="badge badge-info">Previous Release</span>
+      </div>
+    </div>
+
+    <p class="changelog-summary">Introduces the Customer Self-Registration Portal, a complete invitation system for staff and customers, My Locker customer dashboard, and critical role security hardening for the <code>customer</code> role.</p>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      v1.3.0 Highlights
+    </h3>
+    <ul class="changelog-list">
+      <li>Customer self-registration portal at <code>/register/customer/{org-slug}</code> — customers sign up independently with full org branding (logo, color)</li>
+      <li>Staff invitation system — creating a user sends a secure email invitation; no password is set by the admin</li>
+      <li>Customer portal invitation from the Customers module — invite customers directly from admin panel or resend from their profile</li>
+      <li><strong>My Locker</strong> — dedicated customer dashboard at <code>/my-locker</code> showing the customer's locker, pre-alerts, and shipment counters</li>
+      <li>Customer Portal Link in <strong>Settings → Company</strong> — one-click copy and preview of the public registration URL</li>
+      <li>Customer role security hardened: removed <code>customers.access</code>, <code>dashboard.kpi.view</code>, <code>dashboard.activity.view</code> — customers can no longer access the admin area</li>
+      <li>All data scoped to the customer: pre-alerts and shipments filtered by <code>customer_id</code> / <code>created_by</code> when the logged-in user has the <code>customer</code> role</li>
+      <li>Customers redirected to <code>/my-locker</code> on login and dashboard access — never land on the admin logistics dashboard</li>
+      <li>SMTP fallback: if email is not configured, invitation URL displayed in the dashboard for manual sharing</li>
+      <li>All new UI strings fully internationalized — English and Spanish (<code>en.json</code>, <code>es.json</code>, <code>lang/en/</code>, <code>lang/es/</code>)</li>
+    </ul>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Customer Portal
+    </h3>
+    <ul class="changelog-list">
+      <li>Public self-registration page per organization at <code>/register/customer/{slug}</code></li>
+      <li>Registration page inherits organization branding — logo, name, and primary color</li>
+      <li>Fields: name, email, phone (optional), password, confirm password</li>
+      <li>Email uniqueness is scoped per organization — the same email can exist in different organizations</li>
+      <li>After registration, customer is auto-logged-in and redirected to <strong>My Locker</strong></li>
+      <li>Rate-limited: max 10 registration attempts per minute per IP</li>
+      <li>Inactive organizations return a 404 — registration link only works for active organizations</li>
+      <li>Translation files: <code>lang/en/customer_portal.php</code> and <code>lang/es/customer_portal.php</code></li>
+      <li>Routes: <code>GET|POST /register/customer/{slug}</code> → <code>customer.portal.register</code> / <code>customer.portal.register.store</code></li>
+    </ul>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"/></svg>
+      Invitation System
+    </h3>
+    <ul class="changelog-list">
+      <li>Creating a staff user (Settings → Users) now sends a <code>UserInvitationMail</code> — no password set by admin</li>
+      <li>Invitation token: <code>Str::random(64)</code>, stored in <code>users.invitation_token</code>, valid 7 days</li>
+      <li><strong>Resend Invitation</strong> action in user dropdown menu (visible for users with pending invitations)</li>
+      <li>Creating a customer from the admin panel also sends a portal invitation email</li>
+      <li>Customer Detail page shows portal status badge: <strong>Active</strong> / <strong>Pending</strong> / <strong>No Access</strong></li>
+      <li>Resend invitation button on Customer Detail page</li>
+      <li>If SMTP not configured: invitation URL exposed in amber banner — admin can copy and share manually</li>
+      <li>Translation files: <code>lang/en/invitation.php</code> and <code>lang/es/invitation.php</code></li>
+      <li>DB columns added to <code>users</code>: <code>invitation_token</code> (varchar 100, unique), <code>invitation_sent_at</code> (timestamp), <code>invitation_accepted_at</code> (timestamp)</li>
+      <li>Routes: <code>GET /invitation/{token}</code> → <code>invitation.show</code> | <code>POST /invitation/{token}/accept</code> → <code>invitation.accept</code></li>
+      <li>Routes: <code>POST /settings/users/{user}/resend-invitation</code> → <code>settings.users.resend-invitation</code></li>
+      <li>Routes: <code>POST /customers/{customer}/resend-portal-invitation</code> → <code>customers.resend-invitation</code></li>
+    </ul>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      My Locker (Customer Dashboard)
+    </h3>
+    <ul class="changelog-list">
+      <li>Dedicated customer dashboard at <code>/my-locker</code></li>
+      <li>Displays the customer's assigned locker: code, address, warehouse</li>
+      <li>Pre-alert list scoped to the logged-in customer with status counters (pending, received, converted, cancelled)</li>
+      <li>All data is strictly scoped to <code>customer_id = Auth::id()</code> — no cross-customer data exposure</li>
+      <li>Navigation item visible to all authenticated users without additional permission</li>
+    </ul>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Security — Customer Role Hardening
+    </h3>
+    <ul class="changelog-list">
+      <li>Removed <code>customers.access</code> from <code>customer</code> role — customers could previously access the customer management admin area</li>
+      <li>Removed <code>dashboard.kpi.view</code> and <code>dashboard.activity.view</code> from <code>customer</code> role</li>
+      <li>Customer role now holds exactly: <code>view dashboard</code>, <code>create shipments</code>, <code>tracking.view</code></li>
+      <li><code>LoginController</code>: customers redirected to <code>/my-locker</code> after login (all other roles → <code>/dashboard</code>)</li>
+      <li><code>DashboardController::index()</code>: redirects customers to <code>/my-locker</code> as a secondary guard</li>
+      <li><code>PreAlertController::index()</code>: scopes results to <code>customer_id = Auth::id()</code> for customer role</li>
+      <li><code>ShipmentController::index()</code>: scopes results to <code>created_by = Auth::id()</code> for customer role; stats follow same scoping</li>
+      <li>All role name references normalized to lowercase <code>'customer'</code> throughout codebase (<code>CustomerController</code>, <code>CustomersExport</code>, <code>CustomersImport</code>, <code>DeprixaProImporter</code>, <code>ContractController</code>)</li>
+      <li>Migration: <code>2026_04_18_000001_fix_customer_role_permissions</code></li>
+    </ul>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings — Customer Portal Link
+    </h3>
+    <ul class="changelog-list">
+      <li><strong>Settings → Company</strong> now shows a <em>Customer Portal Registration Link</em> section</li>
+      <li>Displays the full public URL for customer self-registration under this organization</li>
+      <li>One-click <strong>Copy</strong> button with visual feedback (icon changes to checkmark after copy)</li>
+      <li><strong>Preview</strong> button opens the registration page in a new tab for testing</li>
+    </ul>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-4V4H6v16h12V10z"/></svg>
+      Database &amp; Demo SQL
+    </h3>
+    <ul class="changelog-list">
+      <li><code>users</code>: added <code>invitation_token</code> (varchar 100, unique), <code>invitation_sent_at</code>, <code>invitation_accepted_at</code> (timestamps)</li>
+      <li>Migration <code>2026_04_17_600001_add_invitation_fields_to_users_table</code></li>
+      <li>Migration <code>2026_04_18_000001_fix_customer_role_permissions</code> — revokes excess permissions from customer role</li>
+      <li><code>database/sql/deprixa_lite.sql</code> updated: <code>role_has_permissions</code> and <code>migrations</code> table aligned with all of the above</li>
+    </ul>
+  </div>
+
+  <!-- v1.2.0 -->
+  <div class="changelog-entry">
+    <div class="changelog-version-header">
+      <div class="changelog-version-tag">v1.2.0</div>
+      <div class="changelog-meta">
+        <span class="changelog-date">April 14, 2026</span>
+        <span class="badge badge-success">Initial Public Release</span>
+      </div>
+    </div>
+
+    <p class="changelog-summary">First public release of Deprixa Plus on Envato CodeCanyon — a complete courier and logistics management platform built with Laravel 12, React 18, and Inertia.js.</p>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      v1.2.0 Highlights
+    </h3>
+    <ul class="changelog-list">
+      <li>Invoice number permanently stored in database at shipment creation — guarantees audit trail and financial traceability across all time</li>
+      <li>Invoice search now covers both tracking number and invoice number simultaneously</li>
+      <li>COD (Cash on Delivery) module: full field set on shipments — <code>is_cod</code>, <code>cod_amount</code>, <code>cod_currency</code>, <code>cod_status</code>, <code>cod_collected_at</code>, <code>cod_collected_by</code></li>
+      <li>Proof of Delivery module: capture signatures, photos, and recipient confirmation linked to each shipment</li>
+      <li>Return Shipments module: manage reverse logistics with full status lifecycle</li>
+      <li>HS Codes &amp; Customs Declarations: international shipment compliance fields</li>
+      <li>Import Jobs: bulk shipment import tracking with validation and error reporting</li>
+      <li>Install wizard fully automated — imports database, runs pending migrations, and creates storage symlink in a single flow with zero manual steps</li>
+      <li>Production-hardened CSP — all dev-server origins removed from security middleware</li>
+      <li>Sequential numbering system: configurable prefix, padding, and periodic reset rules for both invoice numbers and tracking numbers</li>
+    </ul>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/><rect x="9" y="11" width="14" height="10" rx="2"/></svg>
+      Shipments Module
+    </h3>
+    <ul class="changelog-list">
+      <li>Full shipment lifecycle management: Created → Assigned → Picked Up → In Transit → Out for Delivery → Delivered</li>
+      <li>Exception recording with reason codes and reattempt scheduling</li>
+      <li>On Hold and Returned status branches with appropriate next-action flows</li>
+      <li>Auto-generated tracking numbers in <code>TRK########</code> format (8-digit zero-padded sequential)</li>
+      <li>Shipment creation wizard: Sender/Receiver → Package Details → Service Selection → Review &amp; Confirm</li>
+      <li>Bulk status updates with branch-level permission controls</li>
+      <li>Shipment label PDF generation in four formats: A4 Full Page, A4 Half Page, Thermal 4×6, Thermal 4×4</li>
+      <li>Clone shipment functionality for recurring senders and receivers</li>
+      <li>Archive shipments to keep the active list clean without deleting records</li>
+      <li>Full activity log per shipment capturing every status change, user action, and timestamp</li>
+      <li>Multi-dimensional search and filter: status, date range, courier, branch, service type, zone, COD, exception flag, client, tracking number</li>
+      <li>COD (Cash on Delivery) tracking with reconciliation flags</li>
+      <li>Parcel dimensions and weight capture with volumetric weight calculation</li>
+      <li>Fragile goods and declared value fields</li>
+      <li>Internal reference number field for e-commerce order correlation</li>
+      <li>File attachments per shipment (photos, documents, proof of delivery)</li>
+      <li>Export shipment list to CSV</li>
+    </ul>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+      Dispatch Module
+    </h3>
+    <ul class="changelog-list">
+      <li>Dispatch board showing unassigned and in-progress shipments for the current branch</li>
+      <li>Individual and bulk assignment of shipments to couriers</li>
+      <li>Auto-optimize route engine (<code>POST /dispatch/auto-optimize</code>) — groups shipments by zone and assigns to optimal couriers</li>
+      <li>In-app courier notification on assignment</li>
+      <li>Re-assignment and unassignment from the dispatch board</li>
+      <li>Real-time driver locations map showing courier GPS positions, last update time, and assigned shipment count</li>
+      <li>Driver location history playback for any courier and any date (retained 30 days)</li>
+      <li>Dispatch board filters: branch, courier, zone, status, date, service type</li>
+    </ul>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Customers Module
+    </h3>
+    <ul class="changelog-list">
+      <li>Individual and company client profiles with full field sets (name, type, ID/tax number, email, phone, address, tags, notes)</li>
+      <li>Customer list with search by name, phone, email, or ID</li>
+      <li>Filter by customer type, city, and tags</li>
+      <li>Shipment history tab per customer showing all linked shipments with status and date</li>
+      <li>Customer summary stats: total shipments, total billed, outstanding balance</li>
+      <li>CSV import with downloadable template and import preview</li>
+      <li>CSV export respecting active filters</li>
+      <li>Quick-create modal from within the shipment wizard — create a customer without leaving the form</li>
+      <li>Search-as-you-type customer lookup in shipment forms with address auto-fill</li>
+      <li>Soft delete (archive) for customers with linked shipments</li>
+    </ul>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      Rates &amp; Pricing Module
+    </h3>
+    <ul class="changelog-list">
+      <li>Geographic zone management — name, code, description, city assignments</li>
+      <li>Rate card creation per origin zone → destination zone → service type combination</li>
+      <li>Weight-tier rate rules with base price, per-kg surcharge, and dimensional weight factor</li>
+      <li>Automatic price calculation at shipment creation based on zones, weight, and service type</li>
+      <li>Price override capability for operators with appropriate permission</li>
+      <li>Internal rate calculator (staff): enter origin, destination, weight, dimensions → get full price breakdown</li>
+      <li>Public rate calculator at <code>/rate</code> — no login required, for customer self-service quotes</li>
+      <li>Rate card active/inactive toggle for managing pricing changes without deleting history</li>
+    </ul>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Billing Module
+    </h3>
+    <ul class="changelog-list">
+      <li>One invoice per shipment — auto-generated at shipment creation</li>
+      <li>Billing list with filters by date range, payment status, and branch</li>
+      <li>Invoice detail page with full company branding, line items, tax breakdown, and payment history</li>
+      <li>Payment recording: date, method (cash, bank transfer, card, check), reference number, amount, notes</li>
+      <li>Partial payment support — invoice status updates to Partially Paid with remaining balance tracked</li>
+      <li>Invoice send via Email (PDF attachment), WhatsApp (link), and SMS (link)</li>
+      <li>Single invoice PDF download from detail page</li>
+      <li>Bulk PDF export with ZIP packaging from the billing list</li>
+      <li>Invoice void capability</li>
+      <li>Online payment endpoint (<code>/shipments/{shipment}/payment/success</code>) for gateway integrations</li>
+      <li>Tax configuration per organization applied automatically to all invoices</li>
+    </ul>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Reports Module
+    </h3>
+    <ul class="changelog-list">
+      <li>Financial Report at <code>/reports/financial</code> — revenue by period, paid vs. unpaid, top clients, total shipments, delivered %, exception %</li>
+      <li>Revenue bar chart showing billed amounts over time (daily/weekly/monthly granularity)</li>
+      <li>Payment status donut chart showing Paid / Partially Paid / Unpaid distribution with collection rate %</li>
+      <li>Top 5 clients by revenue table with billed, collected, and outstanding columns</li>
+      <li>Filters: date range (7 presets + custom) and branch</li>
+      <li>PDF export of the full financial report with charts</li>
+      <li>Access restricted to roles with <code>settings.billing.view</code> permission</li>
+    </ul>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+      Dashboard
+    </h3>
+    <ul class="changelog-list">
+      <li>KPI cards: Total Shipments, Pending Shipments, Delivered Today, Revenue (MTD), Exceptions (Open), Overdue Invoices</li>
+      <li>Recharts-powered charts: daily shipment volume line chart, status distribution donut, revenue by period bar chart</li>
+      <li>Logistics sub-dashboard at <code>/dashboard/logistics</code> for operational metrics</li>
+      <li>Exception Alert Panel: live list of open exceptions with direct links to affected shipments</li>
+      <li>Date range presets plus custom range picker</li>
+      <li>Branch filter: Admins and Managers can switch between branches or view company-wide data</li>
+      <li>Role-adapted dashboard views: Couriers see only their own assigned shipments; Accountants see financial KPIs</li>
+    </ul>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Users &amp; Roles
+    </h3>
+    <ul class="changelog-list">
+      <li>Five roles: Super Admin, Admin, Employee, Driver, Customer</li>
+      <li>Spatie Laravel Permission for fine-grained RBAC — permissions covering Shipments, Dispatch, Customers, Billing, Reports, Settings, Rates/Pricing</li>
+      <li>Full permission matrix with role-to-permission mapping, customizable per role in Settings → Roles</li>
+      <li>Two-factor authentication (TOTP): optional per user or enforced by admin for specific roles</li>
+      <li>Recovery codes for 2FA lockout scenarios</li>
+      <li>Admin 2FA override for locked-out users (logged in audit trail)</li>
+      <li>Password policies: minimum length, complexity requirements, history, expiry, lockout thresholds — configured in Settings → Security</li>
+      <li>User deactivation (preserves history) vs. permanent deletion</li>
+      <li>User invitation via email with 24-hour expiring activation link</li>
+      <li>Role-adapted UI: navigation and features shown/hidden based on the logged-in user's role</li>
+    </ul>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 0 1 21.54 12c0 5.52-4.48 10-10 10S1.54 17.52 1.54 12 6.02 2 11.54 2c2.03 0 3.91.61 5.48 1.65"/></svg>
+      Settings
+    </h3>
+    <ul class="changelog-list">
+      <li>Company Profile: name, tax ID, address, phone, email, website, logo variants (main, dark, light, invoice, favicon)</li>
+      <li>Branding: primary/secondary/accent color configuration, theme selection, font selection</li>
+      <li>Locale: language (EN/ES), timezone, date/time format, weight/dimension units, currency with symbol configuration</li>
+      <li>Branch management: multi-branch support with individual address, phone, and operational hours per branch</li>
+      <li>Shipment status configuration: rename status labels, change indicator colors</li>
+      <li>Service type configuration: add, rename, and set expected transit time for each service type</li>
+      <li>Notifications: email event triggers with template preview and per-event enable/disable</li>
+      <li>Security settings: password policy and session controls including login attempt limits and session timeout</li>
+      <li>Tracking page: public tracking toggle, page headline, branded cover image, show/hide courier name</li>
+      <li>Shipping config: COD settings, label formats, tracking number prefix</li>
+      <li>Audit log: full user action log filterable by user, action type, and date</li>
+      <li>Maintenance tools: clear cache, clear sessions, run database backup, enable maintenance mode</li>
+      <li>Updates: License activation and OTA update management with version history</li>
+    </ul>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Public Tracking
+    </h3>
+    <ul class="changelog-list">
+      <li>Public tracking page at <code>/tracking</code> — no login required</li>
+      <li>Enter tracking number or scan QR code to view shipment status</li>
+      <li>Full status timeline with timestamps, courier notes, and delivery confirmation</li>
+      <li>Branded tracking page — shows company logo, colors, and custom headline from Settings → Tracking</li>
+      <li>Optional show/hide of courier name on the public tracking page</li>
+    </ul>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      Public Rate Calculator
+    </h3>
+    <ul class="changelog-list">
+      <li>Public rate calculator at <code>/rate</code> — no login required</li>
+      <li>Customer selects origin city, destination city, weight, and service type to get a price estimate</li>
+      <li>Uses the same rate cards and rules configured in the Rates &amp; Pricing module</li>
+      <li>No account or purchase commitment required — purely informational quoting tool</li>
+    </ul>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      REST API
+    </h3>
+    <ul class="changelog-list">
+      <li>Laravel Sanctum token authentication with fine-grained ability scoping</li>
+      <li>Base URL: <code>/api/v1</code> — versioned for forward compatibility</li>
+      <li>Shipments endpoints: list, create, get by tracking number, update status, record exception, download label, cancel</li>
+      <li>Public tracking endpoint: no authentication required, returns status history</li>
+      <li>Customers endpoints: list, create, get, update</li>
+      <li>Billing endpoints: list invoices, get invoice (with PDF option), record payment</li>
+      <li>Reports endpoint: financial report summary</li>
+      <li>Webhook support: shipment status events with HMAC-SHA256 signature verification and retry logic</li>
+      <li>Rate limiting per token with differentiated limits for read/write/report endpoints</li>
+      <li>Standardized pagination envelope with <code>meta</code> and <code>links</code> objects</li>
+      <li>Standardized error responses with <code>code</code>, <code>message</code>, <code>errors</code>, and <code>request_id</code></li>
+    </ul>
+
+    <h3 class="changelog-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-4V4H6v16h12V10z"/></svg>
+      Platform &amp; Infrastructure
+    </h3>
+    <ul class="changelog-list">
+      <li>Laravel 12 (PHP 8.2+), React 18, Inertia.js 2 — full-stack SPA without a separate API layer for the web UI</li>
+      <li>Tailwind CSS 4 + Vite 5 for asset compilation</li>
+      <li>Spatie Laravel Permission for RBAC</li>
+      <li>Spatie Laravel Activity Log for full audit trails across all models</li>
+      <li>DomPDF for server-side PDF generation (invoices, labels, reports)</li>
+      <li>Recharts for interactive dashboard analytics</li>
+      <li>React i18next for EN/ES internationalization — UI strings, email templates, and PDF content</li>
+      <li>Ziggy for exporting named Laravel routes to JavaScript</li>
+      <li>Redis support for cache, sessions, and job queues</li>
+      <li>Laravel Horizon for queue monitoring</li>
+      <li>License activation and over-the-air update delivery integration</li>
+      <li>S3-compatible object storage support for document uploads, invoice PDFs, and export files</li>
+      <li>Multi-branch architecture: data scoped by branch with cross-branch views for Admin+</li>
+      <li>Full dark mode UI with responsive layout (mobile-adaptive sidebar, touch-friendly shipment list)</li>
+      <li>Distributed as a ZIP download via Envato/CodeCanyon — no GitHub repository</li>
+    </ul>
+  </div>
+
+  <footer class="doc-footer">
+    <div class="doc-footer-inner">
+      <div class="doc-footer-brand">Deprixa <span>Plus</span> Documentation &mdash; v1.3.2</div>
+      <div class="doc-footer-links">
+        <a href="index.html">Overview</a>
+        <a href="getting-started.html">Getting Started</a>
+        <a href="api/reference.html">API</a>
+        <a href="#">Support</a>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<script src="assets/nav.js"></script>
+<script>injectNav('changelog', './');</script>
+</body>
+</html>

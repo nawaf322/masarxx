@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Business Model — Deprixa Plus Documentation</title>
+  <link rel="stylesheet" href="assets/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+</head>
+<body>
+<div id="header-container"></div>
+<div id="sidebar-container"></div>
+<main class="doc-content">
+  <div id="breadcrumb-container"></div>
+
+  <div class="page-header">
+    <h1>Business Model</h1>
+    <p class="subtitle">Understanding the problem Deprixa Plus solves, the target market it serves, and the commercial model behind it.</p>
+  </div>
+
+  <!-- PROBLEM -->
+  <section class="doc-section">
+    <h2>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      The Problem
+    </h2>
+    <p>Small to medium courier and logistics companies typically start with a combination of spreadsheets, WhatsApp groups, physical logbooks, and disconnected tools to manage their operations. As the business grows, this approach creates serious operational problems:</p>
+
+    <div class="feature-grid feature-grid-3" style="margin-top:1.25rem;">
+      <div class="feature-card">
+        <div class="feature-card-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <h3>No Centralized Tracking</h3>
+        <p>Shipment status lives in someone's head or a shared spreadsheet. Customers have no self-service tracking. Status updates require manual phone calls.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+        </div>
+        <h3>Billing Chaos</h3>
+        <p>Invoices are created manually in Word or Excel, sent inconsistently, and rarely tracked to payment. Revenue leaks from uninvoiced shipments.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+        </div>
+        <h3>No Accountability</h3>
+        <p>When a package is lost or delayed, there is no audit trail to understand what happened. Disputes are resolved by guessing, not by data.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </div>
+        <h3>Zero Visibility</h3>
+        <p>Managers cannot see KPIs in real time. How many shipments are out for delivery right now? What is the exception rate this week? The data exists — it just isn't accessible.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        </div>
+        <h3>Branch Isolation</h3>
+        <p>Multiple branches operate independently with no shared data. Head office cannot see branch performance without manually requesting reports by email.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>Security Risk</h3>
+        <p>Shared login credentials, no role-based access, and no audit log. Any employee can see all client data, pricing, and financial information.</p>
+      </div>
+    </div>
+
+    <p style="margin-top:1.5rem;">Deprixa Plus solves all of these problems by providing a single, integrated platform purpose-built for the courier and logistics industry.</p>
+  </section>
+
+  <!-- TARGET MARKET -->
+  <section class="doc-section">
+    <h2>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+      Target Market
+    </h2>
+    <p>Deprixa Plus is positioned for the under-served small-to-medium logistics company segment — businesses that need professional software but cannot afford enterprise-grade solutions with six-figure implementation costs.</p>
+
+    <table>
+      <thead>
+        <tr><th>Segment</th><th>Company Size</th><th>Shipment Volume</th><th>Key Pain Points</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Regional Courier Companies</td>
+          <td>10–200 employees</td>
+          <td>500–50,000 shipments/month</td>
+          <td>Manual tracking, no customer portal, disconnected branches</td>
+        </tr>
+        <tr>
+          <td>Freight Forwarders (SME)</td>
+          <td>5–50 employees</td>
+          <td>100–5,000 shipments/month</td>
+          <td>Complex documentation, multi-carrier management, billing</td>
+        </tr>
+        <tr>
+          <td>E-Commerce Fulfillment</td>
+          <td>5–100 employees</td>
+          <td>1,000–100,000 orders/month</td>
+          <td>Order-to-shipment linkage, returns management, client tracking</td>
+        </tr>
+        <tr>
+          <td>Last-Mile Operations</td>
+          <td>3–30 employees</td>
+          <td>200–20,000 deliveries/month</td>
+          <td>Zone management, courier routing, exception handling</td>
+        </tr>
+        <tr>
+          <td>Corporate Logistics Depts.</td>
+          <td>Internal team of 2–20</td>
+          <td>100–10,000 shipments/month</td>
+          <td>Visibility, reporting, cost tracking per department</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- SUBSCRIPTION TIERS -->
+  <section class="doc-section">
+    <h2>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      License Tiers
+    </h2>
+    <p>Deprixa Plus is sold as a self-hosted, one-time license (similar to Envato/CodeCanyon products). After purchase, you install it on your own server. Optional annual support renewals provide continued updates and priority assistance.</p>
+
+    <div class="perm-table-wrapper">
+      <table class="perm-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Regular License</th>
+            <th>Extended License</th>
+            <th>Enterprise</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>License Type</td><td>Single installation</td><td>Single installation, client-facing</td><td>Multiple installations</td></tr>
+          <tr><td>Users</td><td>Unlimited</td><td>Unlimited</td><td>Unlimited</td></tr>
+          <tr><td>Branches</td><td>Up to 5</td><td>Unlimited</td><td>Unlimited</td></tr>
+          <tr><td>Shipments/month</td><td>Unlimited</td><td>Unlimited</td><td>Unlimited</td></tr>
+          <tr><td>White-label / Remove Branding</td><td class="perm-x">✗</td><td class="perm-check">✓</td><td class="perm-check">✓</td></tr>
+          <tr><td>API Access</td><td class="perm-check">✓</td><td class="perm-check">✓</td><td class="perm-check">✓</td></tr>
+          <tr><td>Source Code Access</td><td class="perm-x">✗</td><td class="perm-x">✗</td><td class="perm-check">✓</td></tr>
+          <tr><td>Priority Email Support</td><td class="perm-x">✗</td><td class="perm-check">✓</td><td class="perm-check">✓</td></tr>
+          <tr><td>1 Year of Updates</td><td class="perm-check">✓</td><td class="perm-check">✓</td><td class="perm-check">✓</td></tr>
+          <tr><td>Installation Assistance</td><td class="perm-x">✗</td><td class="perm-partial">Optional add-on</td><td class="perm-check">✓</td></tr>
+          <tr><td>Custom Module Development</td><td class="perm-x">✗</td><td class="perm-x">✗</td><td class="perm-partial">On request</td></tr>
+          <tr><td>SLA Guarantee</td><td class="perm-x">✗</td><td class="perm-x">✗</td><td class="perm-check">✓ (24h response)</td></tr>
+          <tr><td>Resell to End Clients</td><td class="perm-x">✗</td><td class="perm-check">✓</td><td class="perm-check">✓</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-info">
+      <div class="callout-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <div class="callout-body">
+        <p class="callout-title">License Terminology</p>
+        <p>A <strong>Regular License</strong> is for use in a single project where end users are not charged for access. An <strong>Extended License</strong> is required if you are charging end users, reselling as a service, or removing branding for a client. Contact us for Enterprise multi-site deals.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVENUE STREAMS -->
+  <section class="doc-section">
+    <h2>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+      Revenue Streams
+    </h2>
+
+    <div class="two-col">
+      <div class="settings-section">
+        <div class="settings-section-header">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+          <h3>License Sales</h3>
+        </div>
+        <div class="settings-section-body">
+          <p>Primary revenue from one-time license purchases via Envato/CodeCanyon or direct sales. Customers pay once and receive 12 months of updates and forum support.</p>
+          <ul>
+            <li>Regular License: single project use</li>
+            <li>Extended License: SaaS/reselling use</li>
+            <li>Enterprise: custom pricing, multi-install</li>
+          </ul>
+        </div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-section-header">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <h3>Support Renewals</h3>
+        </div>
+        <div class="settings-section-body">
+          <p>Annual support and update renewal subscriptions. After the first 12 months, customers can renew at a reduced rate to continue receiving updates and accessing the support channel.</p>
+          <ul>
+            <li>6-month renewal: access to new releases</li>
+            <li>12-month renewal: releases + priority support</li>
+            <li>Managed hosting add-on: optional</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="settings-section">
+        <div class="settings-section-header">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+          <h3>White-Label Reselling</h3>
+        </div>
+        <div class="settings-section-body">
+          <p>Extended license holders (agencies, consultants, SaaS operators) can brand and resell Deprixa Plus to their own clients. This multiplies revenue without additional development cost.</p>
+          <ul>
+            <li>Deploy for logistics clients as your own product</li>
+            <li>Customize branding, colors, and logo</li>
+            <li>Bill clients monthly for hosting + support</li>
+          </ul>
+        </div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-section-header">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07"/></svg>
+          <h3>Custom Development</h3>
+        </div>
+        <div class="settings-section-body">
+          <p>For Enterprise clients needing integrations, custom modules, or platform modifications not available in the standard product. Quoted individually based on scope.</p>
+          <ul>
+            <li>Carrier API integrations (FedEx, UPS, DHL)</li>
+            <li>Custom reporting modules</li>
+            <li>ERP/accounting system connectors</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ONBOARDING FLOW -->
+  <section class="doc-section">
+    <h2>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      Customer Onboarding Flow
+    </h2>
+    <p>From purchase to live operation, a typical customer journey takes 30 minutes to 4 hours depending on technical expertise and data migration requirements.</p>
+
+    <ol class="step-list">
+      <li class="step-card">
+        <div class="step-number">1</div>
+        <div class="step-body">
+          <h4>Purchase</h4>
+          <p>Customer purchases a license on Envato/CodeCanyon or directly. They receive a purchase code (license key) and a download link for the source code ZIP file.</p>
+        </div>
+      </li>
+      <li class="step-card">
+        <div class="step-number">2</div>
+        <div class="step-body">
+          <h4>Download &amp; Deploy</h4>
+          <p>Customer extracts the ZIP file to their VPS or web server. They follow the <a href="getting-started.html">Installation Guide</a> to run composer, npm, and database migrations. Technical customers take 15–30 minutes. Non-technical customers may purchase installation assistance.</p>
+        </div>
+      </li>
+      <li class="step-card">
+        <div class="step-number">3</div>
+        <div class="step-body">
+          <h4>Activate License</h4>
+          <p>Customer logs in and navigates to <strong>Settings &gt; Updates</strong>. They enter their purchase code to activate the license via the license server. Activation links the installation to the purchase, enables update checking, and unlocks the full feature set.</p>
+        </div>
+      </li>
+      <li class="step-card">
+        <div class="step-number">4</div>
+        <div class="step-body">
+          <h4>Configure Company Profile</h4>
+          <p>Customer sets their company name, logo, contact details, country, currency, and timezone in <strong>Settings &gt; Company Profile</strong> and <strong>Settings &gt; Locale</strong>. This takes 5–10 minutes.</p>
+        </div>
+      </li>
+      <li class="step-card">
+        <div class="step-number">5</div>
+        <div class="step-body">
+          <h4>Add Users &amp; Branches</h4>
+          <p>Customer creates user accounts for their team members and assigns appropriate roles (Admin, Employee, Driver, etc.). They also create Branch records for each physical location. Users can be invited via email.</p>
+        </div>
+      </li>
+      <li class="step-card">
+        <div class="step-number">6</div>
+        <div class="step-body">
+          <h4>Configure Services &amp; Pricing</h4>
+          <p>Customer sets up their service types (Standard, Express, Same-Day, Freight) with pricing rules. They configure shipment status workflows and notification templates to match their operational process.</p>
+        </div>
+      </li>
+      <li class="step-card">
+        <div class="step-number">7</div>
+        <div class="step-body">
+          <h4>Go Live</h4>
+          <p>Customer begins creating real shipments. Staff log in using their assigned credentials. Customers receive their tracking links. The system is fully operational. Ongoing: manage shipments, generate invoices, run reports, monitor the dashboard.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <!-- COMPETITIVE POSITIONING -->
+  <section class="doc-section">
+    <h2>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+      Competitive Positioning
+    </h2>
+    <table>
+      <thead>
+        <tr><th>Solution Type</th><th>Examples</th><th>Typical Cost</th><th>Deprixa Plus Advantage</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Enterprise TMS</td>
+          <td>SAP TM, Oracle TMS, BluJay</td>
+          <td>$50K–$500K+ / year</td>
+          <td>100x lower cost. No implementation consultant required. Up and running in hours, not months.</td>
+        </tr>
+        <tr>
+          <td>SaaS Courier Software</td>
+          <td>Shiptime, Shippo, EasyPost</td>
+          <td>$100–$2,000 / month (ongoing)</td>
+          <td>One-time cost. Self-hosted = full data ownership. No per-shipment fees. Customizable without vendor lock-in.</td>
+        </tr>
+        <tr>
+          <td>Generic WMS/ERP</td>
+          <td>Odoo, ERPNext (logistics modules)</td>
+          <td>$0–$3,000 + setup time</td>
+          <td>Purpose-built for courier operations. Shipment tracking, label generation, and public tracking page are core features, not afterthoughts.</td>
+        </tr>
+        <tr>
+          <td>Custom Development</td>
+          <td>Freelancer or agency built</td>
+          <td>$20K–$150K one-time</td>
+          <td>Deprixa Plus provides 90% of a custom build at 2% of the cost. Use budget savings for operations, not software development.</td>
+        </tr>
+        <tr>
+          <td>Spreadsheets</td>
+          <td>Google Sheets, Excel</td>
+          <td>~$0</td>
+          <td>Unlimited scalability, real-time multi-user access, customer-facing tracking, audit trail, automated invoicing, and reports — none of which are possible in spreadsheets.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer class="doc-footer">
+    <div class="doc-footer-inner">
+      <div class="doc-footer-brand">Deprixa <span>Plus</span> Documentation &mdash; v1.3.2</div>
+      <div class="doc-footer-links">
+        <a href="index.html">Overview</a>
+        <a href="getting-started.html">Installation</a>
+        <a href="changelog.html">Changelog</a>
+        <a href="#">Support</a>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<script src="assets/nav.js"></script>
+<script>injectNav('business-model', './');</script>
+</body>
+</html>

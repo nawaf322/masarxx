@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Architecture — Deprixa Plus Documentation</title>
+  <link rel="stylesheet" href="assets/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+</head>
+<body>
+<div id="header-container"></div>
+<div id="sidebar-container"></div>
+<main class="doc-content">
+  <div id="breadcrumb-container"></div>
+
+  <div class="page-header">
+    <h1>Technical Architecture</h1>
+    <p class="subtitle">A complete overview of the technology stack, application structure, data flow, and system design decisions behind Deprixa Plus.</p>
+  </div>
+
+  <!-- TECH STACK -->
+  <section class="doc-section">
+    <h2>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      Full Technology Stack
+    </h2>
+
+    <h3>Frontend Layer</h3>
+    <table>
+      <thead>
+        <tr><th>Library / Tool</th><th>Version</th><th>Purpose</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>React</td><td>18.3</td><td>Core UI library — component model, hooks, state management</td><td>Functional components throughout, no class components</td></tr>
+        <tr><td>Inertia.js</td><td>2</td><td>Client/server bridge — eliminates the need for a REST API for page renders</td><td>Pages are React components, data is passed as props from Laravel controllers</td></tr>
+        <tr><td>Tailwind CSS</td><td>4.0</td><td>Utility-first CSS framework</td><td>Used with the Vite plugin for JIT compilation</td></tr>
+        <tr><td>Vite</td><td>5.4</td><td>Frontend build tool and dev server with HMR</td><td>Replaces Laravel Mix. Configured in vite.config.js</td></tr>
+        <tr><td>shadcn/ui</td><td>—</td><td>Pre-built accessible UI components (dialogs, dropdowns, tables)</td><td>Components are copied into the codebase and customized</td></tr>
+        <tr><td>Lucide React</td><td>0.400</td><td>Icon library — 1,400+ consistent SVG icons</td><td>Tree-shakeable, used throughout the UI</td></tr>
+        <tr><td>React i18next</td><td>14.x</td><td>Internationalization — EN and ES language support</td><td>Translation files in resources/js/i18n/</td></tr>
+        <tr><td>Recharts</td><td>2.12</td><td>Chart library for dashboard analytics</td><td>Line charts, bar charts, pie/donut charts for KPI visualization</td></tr>
+        <tr><td>Ziggy</td><td>2.3</td><td>Exports Laravel named routes to JavaScript</td><td>Allows using route() helper in React components</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Backend Layer</h3>
+    <table>
+      <thead>
+        <tr><th>Library / Tool</th><th>Version</th><th>Purpose</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Laravel</td><td>12.x</td><td>PHP application framework — routing, ORM, queues, events, validation</td><td>Built on PHP 8.2+ with modern PHP features</td></tr>
+        <tr><td>Spatie Laravel Permission</td><td>6.x</td><td>Role and permission management, stored in database</td><td>Roles: super-admin, admin, employee, driver, customer</td></tr>
+        <tr><td>Spatie Laravel Activity Log</td><td>4.x</td><td>Automatic audit logging for all Eloquent model events</td><td>Logs causer (user), subject (model), description, and metadata as JSON</td></tr>
+        <tr><td>Laravel Sanctum</td><td>4.x</td><td>API token authentication for the REST API</td><td>SPA authentication uses Sanctum's cookie-based session for Inertia</td></tr>
+        <tr><td>Laravel Socialite</td><td>5.x</td><td>OAuth 2.0 social login library (installed, not active in this version)</td><td>Package is present but social login routes are not enabled in the basic version.</td></tr>
+        <tr><td>Barryvdh DomPDF</td><td>3.x</td><td>PDF generation for invoices, shipment labels, and reports</td><td>Uses Blade views as PDF templates</td></tr>
+        <tr><td>maatwebsite/excel</td><td>3.x</td><td>Excel and CSV export for reports</td><td>Leverages Laravel queues for large exports</td></tr>
+        <tr><td>intervention/image</td><td>3.x</td><td>Image processing for logo uploads and resizing</td><td>Requires GD or Imagick PHP extension</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Infrastructure Layer</h3>
+    <table>
+      <thead>
+        <tr><th>Component</th><th>Default</th><th>Alternative</th><th>Purpose</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Database</td><td>MySQL 8.0</td><td>MariaDB 10.6+</td><td>Primary relational data store for all application data</td></tr>
+        <tr><td>Cache</td><td>Redis</td><td>File driver</td><td>Query result caching, view cache, rate limiting counters</td></tr>
+        <tr><td>Session</td><td>Redis</td><td>File / Database</td><td>User session storage. Redis recommended for multi-server deployments</td></tr>
+        <tr><td>Queue</td><td>Redis</td><td>Database / Sync</td><td>Background job processing — emails, PDF generation, report exports</td></tr>
+        <tr><td>File Storage</td><td>Local disk</td><td>AWS S3 / S3-compatible</td><td>Logos, shipment labels, employee documents, report files</td></tr>
+        <tr><td>Updates</td><td>Built-in updater</td><td>—</td><td>License validation and software update delivery</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- FOLDER TREE -->
+  <section class="doc-section">
+    <h2>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+      Project Folder Structure
+    </h2>
+    <p>The project follows standard Laravel conventions with additional directories for services, React components, and localization files.</p>
+
+    <div class="folder-tree">
+      <pre>deprixa-plus/
+├── app/
+│   ├── Console/
+│   │   └── Commands/
+│   │       └── CleanActivityLog.php       <span class="comment"># Prune old audit log entries</span>
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── Auth/                      <span class="comment"># Login, register, password reset, 2FA</span>
+│   │   │   ├── Api/                       <span class="comment"># API v1 controllers</span>
+│   │   │   ├── Settings/                  <span class="comment"># All settings sub-controllers</span>
+│   │   │   │   ├── BrandingController.php
+│   │   │   │   ├── CompanyController.php
+│   │   │   │   ├── LocaleController.php
+│   │   │   │   ├── NotificationsController.php
+│   │   │   │   ├── SecurityController.php
+│   │   │   │   └── UpdatesController.php
+│   │   │   ├── ShipmentController.php
+│   │   │   ├── ClientController.php
+│   │   │   ├── InvoiceController.php
+│   │   │   ├── ReportController.php
+│   │   │   └── DashboardController.php
+│   │   ├── Middleware/
+│   │   │   ├── CheckPermission.php        <span class="comment"># Spatie permission gate middleware</span>
+│   │   │   └── HandleInertiaRequests.php  <span class="comment"># Shares global Inertia props</span>
+│   │   └── Requests/                      <span class="comment"># Form request validation classes</span>
+│   ├── Models/
+│   │   ├── User.php
+│   │   ├── Shipment.php
+│   │   ├── ShipmentStatus.php
+│   │   ├── Client.php
+│   │   ├── Invoice.php
+│   │   ├── InvoiceItem.php
+│   │   ├── Branch.php
+│   │   ├── ServiceType.php
+│   │   └── Setting.php                    <span class="comment"># Key-value settings store</span>
+│   └── Services/
+│       ├── ShipmentService.php            <span class="comment"># Business logic for shipments</span>
+│       ├── InvoiceService.php
+│       ├── NotificationService.php
+│       └── ReportService.php
+├── config/
+│   ├── app.php
+│   ├── auth.php
+│   ├── database.php
+│   ├── filesystems.php
+│   └── permission.php                     <span class="comment"># Spatie permission config</span>
+├── database/
+│   ├── migrations/
+│   │   ├── 0001_01_01_000000_create_users_table.php
+│   │   ├── create_shipments_table.php
+│   │   ├── create_clients_table.php
+│   │   ├── create_invoices_table.php
+│   │   ├── create_branches_table.php
+│   │   ├── create_settings_table.php
+│   │   └── create_activity_log_table.php  <span class="comment"># From spatie/laravel-activitylog</span>
+│   └── seeders/
+│       ├── DatabaseSeeder.php
+│       ├── RoleSeeder.php                 <span class="comment"># Creates all roles and permissions</span>
+│       ├── UserSeeder.php                 <span class="comment"># Default admin user</span>
+│       ├── SettingSeeder.php              <span class="comment"># Default company settings</span>
+│       └── ShipmentStatusSeeder.php
+├── public/
+│   ├── index.php
+│   ├── build/                             <span class="comment"># Compiled frontend assets (Vite output)</span>
+│   └── storage -> ../storage/app/public  <span class="comment"># Symlink (php artisan storage:link)</span>
+├── resources/
+│   ├── js/
+│   │   ├── app.jsx                        <span class="comment"># Inertia app entry point</span>
+│   │   ├── bootstrap.js
+│   │   ├── Components/
+│   │   │   ├── Layout/                    <span class="comment"># Sidebar, topbar, breadcrumb</span>
+│   │   │   ├── UI/                        <span class="comment"># shadcn/ui adapted components</span>
+│   │   │   ├── Shipment/                  <span class="comment"># Shipment-specific components</span>
+│   │   │   └── Charts/                    <span class="comment"># Recharts wrappers</span>
+│   │   ├── Layouts/
+│   │   │   ├── AuthLayout.jsx             <span class="comment"># Login/register page wrapper</span>
+│   │   │   └── AppLayout.jsx              <span class="comment"># Main authenticated app wrapper</span>
+│   │   ├── Pages/
+│   │   │   ├── Auth/                      <span class="comment"># Login, Register, ForgotPassword, 2FA</span>
+│   │   │   ├── Dashboard/                 <span class="comment"># Dashboard.jsx with KPI cards + charts</span>
+│   │   │   ├── Shipments/                 <span class="comment"># Index, Create, Show, Edit</span>
+│   │   │   ├── Clients/
+│   │   │   ├── Invoices/
+│   │   │   ├── Reports/
+│   │   │   └── Settings/                  <span class="comment"># All settings sub-pages</span>
+│   │   └── i18n/
+│   │       ├── en.json                    <span class="comment"># English translations</span>
+│   │       └── es.json                    <span class="comment"># Spanish translations</span>
+│   └── views/
+│       ├── app.blade.php                  <span class="comment"># Inertia root template</span>
+│       └── pdf/                           <span class="comment"># PDF Blade templates (invoices, labels)</span>
+├── routes/
+│   ├── web.php                            <span class="comment"># All Inertia page routes (authenticated)</span>
+│   ├── api.php                            <span class="comment"># REST API v1 routes (Sanctum)</span>
+│   └── console.php                        <span class="comment"># Scheduled command definitions</span>
+├── storage/
+│   ├── app/
+│   │   └── public/                        <span class="comment"># User uploads (accessible via symlink)</span>
+│   ├── framework/
+│   │   ├── cache/
+│   │   ├── sessions/
+│   │   └── views/                         <span class="comment"># Compiled Blade view cache</span>
+│   └── logs/
+│       └── laravel.log
+├── .env                                   <span class="comment"># Environment configuration (not in git)</span>
+├── artisan                                <span class="comment"># Laravel CLI entry point</span>
+├── composer.json
+├── package.json
+└── vite.config.js</pre>
+    </div>
+  </section>
+
+  <!-- SYSTEM ARCHITECTURE DIAGRAM -->
+  <section class="doc-section">
+    <h2>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      System Architecture Diagram
+    </h2>
+    <p>This diagram shows how the major system components interact at runtime.</p>
+
+    <div class="arch-diagram">
+      <svg viewBox="0 0 820 420" xmlns="http://www.w3.org/2000/svg" style="max-width:820px;width:100%;font-family:'Inter',sans-serif;">
+        <!-- Background -->
+        <rect width="820" height="420" fill="#161b27" rx="12"/>
+
+        <!-- Browser box -->
+        <rect x="30" y="160" width="130" height="80" rx="8" fill="#1e2538" stroke="#2a3045" stroke-width="1.5"/>
+        <text x="95" y="190" text-anchor="middle" fill="#e2e8f0" font-size="11" font-weight="600">Browser</text>
+        <text x="95" y="208" text-anchor="middle" fill="#8892a4" font-size="10">React + Inertia.js</text>
+        <text x="95" y="223" text-anchor="middle" fill="#8892a4" font-size="10">Tailwind CSS</text>
+
+        <!-- Arrow: Browser -> Nginx -->
+        <line x1="160" y1="200" x2="215" y2="200" stroke="#FF6B35" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <polygon points="215,196 225,200 215,204" fill="#FF6B35"/>
+        <text x="188" y="193" text-anchor="middle" fill="#FF6B35" font-size="9">HTTPS</text>
+
+        <!-- Nginx box -->
+        <rect x="225" y="160" width="110" height="80" rx="8" fill="#1e2538" stroke="#2a3045" stroke-width="1.5"/>
+        <text x="280" y="190" text-anchor="middle" fill="#e2e8f0" font-size="11" font-weight="600">Nginx</text>
+        <text x="280" y="208" text-anchor="middle" fill="#8892a4" font-size="10">Web Server</text>
+        <text x="280" y="223" text-anchor="middle" fill="#8892a4" font-size="10">SSL Termination</text>
+
+        <!-- Arrow: Nginx -> Laravel -->
+        <line x1="335" y1="200" x2="390" y2="200" stroke="#3b82f6" stroke-width="1.5"/>
+        <polygon points="390,196 400,200 390,204" fill="#3b82f6"/>
+        <text x="363" y="193" text-anchor="middle" fill="#3b82f6" font-size="9">PHP-FPM</text>
+
+        <!-- Laravel box -->
+        <rect x="400" y="130" width="130" height="140" rx="8" fill="#1e2538" stroke="#FF6B35" stroke-width="2"/>
+        <text x="465" y="158" text-anchor="middle" fill="#FF6B35" font-size="11" font-weight="700">Laravel 12</text>
+        <text x="465" y="175" text-anchor="middle" fill="#8892a4" font-size="9">Controllers</text>
+        <text x="465" y="190" text-anchor="middle" fill="#8892a4" font-size="9">Services / Models</text>
+        <text x="465" y="205" text-anchor="middle" fill="#8892a4" font-size="9">Spatie RBAC</text>
+        <text x="465" y="220" text-anchor="middle" fill="#8892a4" font-size="9">Activity Log</text>
+        <text x="465" y="235" text-anchor="middle" fill="#8892a4" font-size="9">Sanctum / Socialite</text>
+        <text x="465" y="250" text-anchor="middle" fill="#8892a4" font-size="9">Queue Worker</text>
+
+        <!-- Arrow: Laravel -> MySQL -->
+        <line x1="530" y1="175" x2="590" y2="140" stroke="#10b981" stroke-width="1.5"/>
+        <polygon points="586,135 596,140 588,147" fill="#10b981"/>
+
+        <!-- MySQL box -->
+        <rect x="595" y="80" width="110" height="75" rx="8" fill="#1e2538" stroke="#2a3045" stroke-width="1.5"/>
+        <text x="650" y="108" text-anchor="middle" fill="#e2e8f0" font-size="11" font-weight="600">MySQL 8</text>
+        <text x="650" y="126" text-anchor="middle" fill="#8892a4" font-size="10">Primary Database</text>
+        <text x="650" y="143" text-anchor="middle" fill="#8892a4" font-size="10">All app data</text>
+
+        <!-- Arrow: Laravel -> Redis -->
+        <line x1="530" y1="210" x2="590" y2="220" stroke="#f59e0b" stroke-width="1.5"/>
+        <polygon points="588,216 598,220 588,224" fill="#f59e0b"/>
+
+        <!-- Redis box -->
+        <rect x="595" y="195" width="110" height="65" rx="8" fill="#1e2538" stroke="#2a3045" stroke-width="1.5"/>
+        <text x="650" y="220" text-anchor="middle" fill="#e2e8f0" font-size="11" font-weight="600">Redis</text>
+        <text x="650" y="237" text-anchor="middle" fill="#8892a4" font-size="10">Cache / Sessions</text>
+        <text x="650" y="252" text-anchor="middle" fill="#8892a4" font-size="10">Job Queues</text>
+
+        <!-- Arrow: Laravel -> Storage -->
+        <line x1="530" y1="245" x2="590" y2="295" stroke="#8892a4" stroke-width="1.5"/>
+        <polygon points="586,291 596,296 588,303" fill="#8892a4"/>
+
+        <!-- Storage box -->
+        <rect x="595" y="298" width="110" height="65" rx="8" fill="#1e2538" stroke="#2a3045" stroke-width="1.5"/>
+        <text x="650" y="323" text-anchor="middle" fill="#e2e8f0" font-size="11" font-weight="600">Storage</text>
+        <text x="650" y="340" text-anchor="middle" fill="#8892a4" font-size="10">Local / S3</text>
+        <text x="650" y="355" text-anchor="middle" fill="#8892a4" font-size="10">Files &amp; Labels</text>
+
+        <!-- Arrow: Laravel -> License Server -->
+        <line x1="465" y1="130" x2="465" y2="75" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="5,3"/>
+        <polygon points="461,75 465,65 469,75" fill="#a78bfa"/>
+
+        <!-- License Server box -->
+        <rect x="395" y="20" width="140" height="55" rx="8" fill="#1e2538" stroke="#2a3045" stroke-width="1.5"/>
+        <text x="465" y="43" text-anchor="middle" fill="#e2e8f0" font-size="11" font-weight="600">License Server</text>
+        <text x="465" y="61" text-anchor="middle" fill="#8892a4" font-size="10">Updates &amp; Licensing</text>
+
+        <!-- Arrow: Laravel -> Mail -->
+        <line x1="400" y1="240" x2="340" y2="300" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="5,3"/>
+        <polygon points="341,295 335,307 348,303" fill="#3b82f6"/>
+
+        <!-- Mail box -->
+        <rect x="200" y="305" width="130" height="60" rx="8" fill="#1e2538" stroke="#2a3045" stroke-width="1.5"/>
+        <text x="265" y="330" text-anchor="middle" fill="#e2e8f0" font-size="11" font-weight="600">Mail (SMTP)</text>
+        <text x="265" y="348" text-anchor="middle" fill="#8892a4" font-size="10">Mailgun / SES / SendGrid</text>
+
+        <!-- Arrow: Laravel -> Public API -->
+        <line x1="400" y1="155" x2="340" y2="90" stroke="#FF6B35" stroke-width="1.5" stroke-dasharray="5,3"/>
+        <polygon points="341,94 335,82 348,88" fill="#FF6B35"/>
+
+        <!-- API Consumers box -->
+        <rect x="30" y="50" width="145" height="65" rx="8" fill="#1e2538" stroke="#2a3045" stroke-width="1.5"/>
+        <text x="102" y="76" text-anchor="middle" fill="#e2e8f0" font-size="11" font-weight="600">API Consumers</text>
+        <text x="102" y="93" text-anchor="middle" fill="#8892a4" font-size="10">Mobile apps, integrations</text>
+        <text x="102" y="108" text-anchor="middle" fill="#8892a4" font-size="10">Sanctum Bearer tokens</text>
+
+        <!-- Legend -->
+        <text x="30" y="395" fill="#8892a4" font-size="9">-- - HTTPS request  — Database  — Cache/Queue  - - - External service</text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- DATA FLOW -->
+  <section class="doc-section">
+    <h2>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+      Request Data Flow
+    </h2>
+
+    <h3>Inertia.js Page Request (Authenticated Users)</h3>
+    <ol>
+      <li>Browser sends an HTTP GET to <code>https://app.yourdomain.com/shipments</code></li>
+      <li>Nginx routes to PHP-FPM socket</li>
+      <li><code>HandleInertiaRequests</code> middleware runs, shares global props (auth user, flash messages, permissions, settings) with the React page</li>
+      <li><code>ShipmentController@index</code> queries the database with Eloquent, applies permission scopes, paginates results</li>
+      <li>Controller returns <code>Inertia::render('Shipments/Index', ['shipments' => ...])</code></li>
+      <li>For full page loads: Laravel returns a full HTML page with the React app bootstrapped inside the Blade template</li>
+      <li>For Inertia SPA navigations: Laravel returns a JSON response with <code>X-Inertia</code> header — React swaps the page component without a full reload</li>
+    </ol>
+
+    <h3>API Request Flow (External Integrations)</h3>
+    <ol>
+      <li>Client sends POST to <code>/api/tokens</code> with <code>email</code>, <code>password</code>, <code>device_name</code></li>
+      <li>Laravel validates credentials, creates a Sanctum personal access token, returns it in the response</li>
+      <li>Client includes <code>Authorization: Bearer {token}</code> header on subsequent requests</li>
+      <li>Sanctum middleware authenticates the token, loads the user with their Spatie roles and permissions</li>
+      <li>API controller processes the request and returns JSON</li>
+    </ol>
+
+    <h3>Background Job Flow (Notifications, Exports)</h3>
+    <ol>
+      <li>User triggers an action (e.g., mark shipment delivered)</li>
+      <li>Controller calls a Service class method</li>
+      <li>Service dispatches a queued Job (e.g., <code>SendDeliveryNotification::dispatch($shipment)</code>)</li>
+      <li>Job is serialized and pushed to the Redis queue</li>
+      <li>Queue worker (running as a Supervisord process) picks up the job and executes it asynchronously</li>
+      <li>On failure, the job is retried up to 3 times with exponential backoff</li>
+    </ol>
+  </section>
+
+  <!-- AUTHENTICATION -->
+  <section class="doc-section">
+    <h2>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Authentication Architecture
+    </h2>
+
+    <p>Deprixa Plus supports four authentication methods:</p>
+
+    <table>
+      <thead>
+        <tr><th>Method</th><th>Used By</th><th>Implementation</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Email + Password</td>
+          <td>All users — primary login method</td>
+          <td>Laravel built-in auth with session cookies. Rate-limited to prevent brute force.</td>
+        </tr>
+        <tr>
+          <td>TOTP 2FA</td>
+          <td>Any user who enables it; enforced for admins if configured</td>
+          <td>Time-based One-Time Password (RFC 6238). Compatible with Google Authenticator, Authy, 1Password.</td>
+        </tr>
+        <tr>
+          <td>API Bearer Token</td>
+          <td>External integrations, mobile apps</td>
+          <td>Laravel Sanctum personal access tokens. Created via POST /api/tokens. Revocable.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-info">
+      <div class="callout-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <div class="callout-body">
+        <p class="callout-title">Inertia SPA vs. REST API</p>
+        <p>The Inertia frontend uses Laravel's session-based authentication (cookies) — not Bearer tokens. Bearer tokens are only for external API consumers. This means the Inertia app benefits from CSRF protection and traditional Laravel session security automatically.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PERMISSIONS ARCHITECTURE -->
+  <section class="doc-section">
+    <h2>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Permissions Architecture (Spatie)
+    </h2>
+    <p>Deprixa Plus uses Spatie Laravel Permission for all access control. Permissions are stored in the <code>permissions</code> table and assigned to roles. Roles are assigned to users. The permission cache is stored in Redis.</p>
+
+    <div class="code-block">
+      <div class="code-block-header">
+        <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+        <span class="code-block-lang">php</span>
+        <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+      </div>
+      <pre><code class="language-php">// In a controller: checking permissions
+public function destroy(Shipment $shipment)
+{
+    $this->authorize('delete-shipments');
+    // or: Gate::authorize('delete-shipments');
+    // or: abort_unless(auth()->user()->can('delete-shipments'), 403);
+
+    $shipment->delete();
+}
+
+// In middleware (routes/web.php)
+Route::middleware(['auth', 'permission:manage-settings'])
+    ->prefix('settings')
+    ->group(function () {
+        Route::get('/', [SettingsController::class, 'index']);
+        // ...
+    });
+
+// In React (Inertia shared props)
+// HandleInertiaRequests.php shares:
+// $permissions = auth()->user()->getAllPermissions()->pluck('name')
+// Used in React as: page.props.auth.permissions.includes('delete-shipments')</code></pre>
+    </div>
+  </section>
+
+  <!-- SETTINGS STORE -->
+  <section class="doc-section">
+    <h2>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Dynamic Settings Store
+    </h2>
+    <p>Application settings (company info, branding, locale, notification preferences) are stored in a <code>settings</code> table as key-value pairs. This allows runtime configuration without modifying code or environment files.</p>
+
+    <div class="code-block">
+      <div class="code-block-header">
+        <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+        <span class="code-block-lang">sql</span>
+        <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+      </div>
+      <pre><code class="language-sql">CREATE TABLE settings (
+    id          BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    key         VARCHAR(255) NOT NULL UNIQUE,
+    value       TEXT,
+    type        ENUM('string','boolean','json','integer') DEFAULT 'string',
+    group       VARCHAR(100) DEFAULT 'general',
+    created_at  TIMESTAMP,
+    updated_at  TIMESTAMP
+);</code></pre>
+    </div>
+
+    <p>Settings are read with a typed helper and cached in Redis:</p>
+
+    <div class="code-block">
+      <div class="code-block-header">
+        <div class="code-block-dots"><span class="code-block-dot"></span><span class="code-block-dot"></span><span class="code-block-dot"></span></div>
+        <span class="code-block-lang">php</span>
+        <button class="copy-btn"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+      </div>
+      <pre><code class="language-php">// Get a setting value with a default
+setting('company.name', 'My Company');
+
+// Set a setting
+setting(['company.name' => 'Deprixa Plus Corp']);
+
+// Flush settings cache (called automatically on save)
+Cache::forget('app_settings');</code></pre>
+    </div>
+  </section>
+
+  <footer class="doc-footer">
+    <div class="doc-footer-inner">
+      <div class="doc-footer-brand">Deprixa <span>Plus</span> Documentation &mdash; v1.3.2</div>
+      <div class="doc-footer-links">
+        <a href="index.html">Overview</a>
+        <a href="getting-started.html">Installation</a>
+        <a href="api/reference.html">API</a>
+        <a href="#">Support</a>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<script src="assets/nav.js"></script>
+<script>injectNav('architecture', './');</script>
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deprixa Plus — Documentation Overview</title>
+  <link rel="stylesheet" href="assets/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+</head>
+<body>
+<div id="header-container"></div>
+<div id="sidebar-container"></div>
+<main class="doc-content">
+  <div id="breadcrumb-container"></div>
+
+  <section class="hero-section">
+    <div class="hero-eyebrow">Official Documentation</div>
+    <h1 class="hero-title">Deprixa <span>Plus</span><br/>The All-in-One Courier &amp; Logistics Platform</h1>
+    <p class="hero-subtitle">Built for courier companies, freight forwarders, and last-mile delivery operations. Manage shipments, clients, billing, and your entire operation from a single, powerful dashboard.</p>
+    <div class="badge-group">
+      <span class="badge badge-primary">v1.3.2</span>
+      <span class="badge badge-tech">Laravel 12</span>
+      <span class="badge badge-tech">React 18</span>
+      <span class="badge badge-tech">Inertia.js</span>
+      <span class="badge badge-tech">Tailwind CSS</span>
+      <span class="badge badge-tech">MySQL 8</span>
+      <span class="badge badge-success">Stable Release</span>
+    </div>
+    <div class="hero-actions" style="margin-top:1.75rem;">
+      <a href="getting-started.html" class="btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Get Started
+      </a>
+      <a href="architecture.html" class="btn-secondary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        View Architecture
+      </a>
+      <a href="api/reference.html" class="btn-secondary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        API Reference
+      </a>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Platform Features
+    </h2>
+    <p>Deprixa Plus covers every aspect of a modern courier and logistics business. From package intake to final delivery confirmation, every step is tracked, audited, and reported.</p>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/><rect x="9" y="11" width="14" height="10" rx="2"/><circle cx="12" cy="20" r="1"/><circle cx="20" cy="20" r="1"/></svg></div>
+        <h3>Shipment Management</h3>
+        <p>Full lifecycle tracking from creation to delivery. Wizard-driven intake, automatic tracking numbers, barcode labels, and real-time status updates.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+        <h3>Multi-Branch Support</h3>
+        <p>Manage multiple warehouse locations and distribution centers. Each branch has its own staff, shipments, couriers, and operational scope.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+        <h3>Role-Based Access</h3>
+        <p>Granular permissions via Spatie Laravel Permissions. Five built-in roles — Super Admin, Admin, Employee, Driver, and Customer — with 97 customizable permissions.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72"/></svg></div>
+        <h3>Branded Customer Portal</h3>
+        <p>Full white-label capability. Customize colors, fonts, logos, and layout. Clients access a tracking portal matching your brand identity.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <h3>Real-Time Tracking</h3>
+        <p>Public tracking page for customers. Live map integration via Leaflet and Mapbox GL for delivery visualization. Status timeline with timestamps and driver notes.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+        <h3>Invoicing &amp; Billing</h3>
+        <p>Automatic invoice generation from shipments. Draft to Paid workflow, PDF export, tax configuration, recurring invoices, and credit notes.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+        <h3>Reporting &amp; Analytics</h3>
+        <p>Shipment summary, revenue, exception, and courier performance reports. Export to PDF, CSV, or Excel. Schedule automated email delivery.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/></svg></div>
+        <h3>Notification Engine</h3>
+        <p>Email and in-app notifications for shipment events, status changes, delivery confirmations, exceptions, and invoice milestones.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h3>Audit Logs</h3>
+        <p>Every system action recorded via Spatie Activity Log. Full accountability for compliance, dispute resolution, and troubleshooting.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+        <h3>Software Updates</h3>
+        <p>Built-in update management. Activate your license, check for updates, review changelogs, and apply with one click from Settings.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg></div>
+        <h3>Dispatch &amp; Route Optimization</h3>
+        <p>Assign shipments to couriers individually or with the auto-optimize engine. Monitor driver locations in real time and review location history for dispute resolution.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        <h3>Rate Calculator</h3>
+        <p>Zone-based pricing engine with weight tiers and dimensional factors. Includes a public rate calculator at <code>/rate</code> — no login required — for customer self-service quotes.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <h3>Multi-Channel Invoice Delivery</h3>
+        <p>Send invoices to clients via Email, WhatsApp, or SMS with a single click. PDF invoices include company branding, line items, taxes, and a payment QR code.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+        <h3>REST API Access</h3>
+        <p>Full REST API with Bearer token authentication. Integrate with e-commerce platforms, ERPs, or customer-facing apps via documented endpoints.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <h3>Customer Self-Registration Portal</h3>
+        <p>Each organization gets a unique public registration URL. Customers sign up themselves, receive an invitation, and land directly in their personal <strong>My Locker</strong> dashboard — no admin intervention needed.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"/></svg></div>
+        <h3>Invitation System</h3>
+        <p>Staff and customers are invited by email with a secure token link — no passwords set by admins. Admins can resend invitations, and the system gracefully falls back to a copyable link when SMTP is not yet configured.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+        <h3>Origin Pickups</h3>
+        <p>Schedule and manage package pickup requests from customers or locations. Full status workflow from pending through confirmed to completed, with driver assignment and address management.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div>
+        <h3>Lockers</h3>
+        <p>Assign virtual or physical locker boxes to customers. Each customer gets a unique locker code and address. Integrates with Pre-Alerts for seamless international parcel management.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><line x1="13.73" y1="21" x2="10.27" y2="21"/></svg></div>
+        <h3>Pre-Alerts</h3>
+        <p>Customers notify the warehouse about incoming packages before arrival. Pre-alerts are reviewed by staff and converted to shipments upon receipt — essential for international locker operations.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.85"/></svg></div>
+        <h3>Returns Management</h3>
+        <p>Manage return and devolution shipments linked to original orders. Dedicated permissions for viewing, creating, and updating return shipments throughout their lifecycle.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        <h3>Cash on Delivery (COD)</h3>
+        <p>End-to-end COD tracking. Drivers collect payment at delivery; admins reconcile and remit to senders. Fully integrated with shipment statuses and financial reporting.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      Quick Links
+    </h2>
+    <div class="quick-links-grid">
+      <a href="getting-started.html" class="quick-link-card"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>Installation Guide</a>
+      <a href="modules/shipments.html" class="quick-link-card"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/><rect x="9" y="11" width="14" height="10" rx="2"/></svg>Shipments Module</a>
+      <a href="modules/users-roles.html" class="quick-link-card"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Users &amp; Roles</a>
+      <a href="modules/settings.html" class="quick-link-card"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg>Settings Reference</a>
+      <a href="api/reference.html" class="quick-link-card"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>API Reference</a>
+      <a href="modules/reports.html" class="quick-link-card"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</a>
+      <a href="changelog.html" class="quick-link-card"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/></svg>Changelog</a>
+      <a href="architecture.html" class="quick-link-card"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Tech Architecture</a>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      Who Is Deprixa Plus For?
+    </h2>
+    <p>Deprixa Plus is designed for logistics and courier businesses that have outgrown spreadsheets and need a centralized, professional platform without building one from scratch.</p>
+    <div class="feature-grid feature-grid-3">
+      <div class="feature-card">
+        <div class="feature-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/><rect x="9" y="11" width="14" height="10" rx="2"/></svg></div>
+        <h3>Courier Companies</h3>
+        <p>Companies processing 50 to 50,000 parcels per month. Manage couriers, delivery zones, vehicle assignments, and customer notifications from one dashboard.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+        <h3>Freight Forwarders</h3>
+        <p>Freight companies managing complex shipments across multiple carriers. Track freight at the consignment level with custom service types and documentation.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div>
+        <h3>E-Commerce Fulfillment</h3>
+        <p>Online retailers running in-house delivery operations. Link orders to shipments, manage returns, and give customers real-time tracking links.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>
+        <h3>Last-Mile Delivery</h3>
+        <p>Hyper-local delivery operations handling same-day and next-day shipments. Zone management, courier workflow, and exception handling built in.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.56 1.18h3a2 2 0 0 1 2 1.72"/></svg></div>
+        <h3>Logistics Operators</h3>
+        <p>Multi-branch logistics providers handling inbound, outbound, and returns. Full visibility across all locations with consolidated reporting and billing.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div>
+        <h3>SaaS Resellers</h3>
+        <p>Agencies and developers who want to white-label and resell a fully built logistics platform to multiple clients with separate branding per installation.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="callout callout-tip">
+    <div class="callout-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    </div>
+    <div class="callout-body">
+      <p class="callout-title">New to Deprixa Plus?</p>
+      <p>Start with the <a href="getting-started.html">Installation Guide</a> to get your environment running, then explore the <a href="modules/shipments.html">Shipments module</a> — the core of the entire platform.</p>
+    </div>
+  </div>
+
+  <footer class="doc-footer">
+    <div class="doc-footer-inner">
+      <div class="doc-footer-brand">Deprixa <span>Plus</span> Documentation &mdash; v1.3.2</div>
+      <div class="doc-footer-links">
+        <a href="getting-started.html">Getting Started</a>
+        <a href="api/reference.html">API</a>
+        <a href="changelog.html">Changelog</a>
+        <a href="#">Support</a>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<script src="assets/nav.js"></script>
+<script>injectNav('overview', './');</script>
+</body>
+</html>
